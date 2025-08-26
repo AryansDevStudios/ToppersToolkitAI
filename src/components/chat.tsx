@@ -197,7 +197,7 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                       <div className={cn("flex w-fit max-w-full flex-col gap-1", message.role === 'user' ? 'items-end' : 'items-start')}>
                         <div
                           className={cn(
-                            'prose prose-sm dark:prose-invert rounded-2xl p-3 px-4 shadow-sm',
+                            'prose prose-sm dark:prose-invert rounded-2xl p-3 px-4 shadow-sm break-words',
                             'prose-p:text-sm prose-p:md:text-base',
                             message.role === 'user'
                               ? 'bg-gradient-to-br from-primary to-violet-500 text-primary-foreground rounded-br-lg prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-a:text-amber-300 hover:prose-a:text-amber-400 prose-code:text-primary-foreground'
