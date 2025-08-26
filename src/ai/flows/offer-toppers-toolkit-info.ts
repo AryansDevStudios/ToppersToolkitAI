@@ -48,27 +48,27 @@ Topper's Toolkit includes the following websites. Analyze the student's doubt an
     - Terms: https://topperstoolkit.netlify.app/terms
     - Manual: https://topperstoolkit.netlify.app/manual
 
-- **Full Terms and Conditions for Topper's Toolkit Shop:**
-    - **Last Updated:** 11-08-2025
-    - **Owner:** Aryan Gupta (AryansDevStudios)
-    - **Seller:** Kuldeep Singh
-    - **Relationship with Access Site:** All digital notes purchased here are accessed exclusively through our official viewer platform, Topper’s Toolkit Viewer (https://topperstoolkitviewer.netlify.app).
-    - **Ownership:** All notes and materials are the sole property of Kuldeep Singh. Purchasing grants a license to use, not ownership. You cannot reproduce, distribute, or resell.
-    - **Delivery:** Digital access is provided after payment verification (up to 1–2 hours). Printed orders are processed according to delivery timelines. A transaction is confirmed via WhatsApp.
-    - **Refunds:** Refunds are only given for technical glitches on our side (fixed within 3 hours) or orders made by mistake (report within 15 minutes). No refunds for term violations.
-    - **Prohibited Activities:** You may NOT download, save, screenshot, screen record, print, photocopy, scan, or share any notes (digital or printed). Sharing account credentials is also forbidden.
-    - **Printed Purchases Terms:** Booklets are for personal use only and cannot be copied, scanned, photographed, or redistributed in any form.
-    - **Anti-Piracy:** Content may contain digital watermarks. Violations are treated as copyright infringement.
-    - **Enforcement:** Violating terms can lead to account suspension or a permanent ban, removal of access without refund, and potential legal action.
-    - **Agreement:** Users must agree to terms at checkout.
-    - **Availability:** Maximum expected downtime is 1 hour.
+#### Full Terms and Conditions for Topper's Toolkit Shop
+- **Last Updated:** 11-08-2025
+- **Owner:** Aryan Gupta (AryansDevStudios)
+- **Seller:** Kuldeep Singh
+- **Relationship with Access Site:** All digital notes purchased here are accessed exclusively through our official viewer platform, Topper’s Toolkit Viewer (https://topperstoolkitviewer.netlify.app).
+- **Ownership:** All notes and materials are the sole property of Kuldeep Singh. Purchasing grants a license to use, not ownership. You cannot reproduce, distribute, or resell.
+- **Delivery:** Digital access is provided after payment verification (up to 1–2 hours). Printed orders are processed according to delivery timelines. A transaction is confirmed via WhatsApp.
+- **Refunds:** Refunds are only given for technical glitches on our side (fixed within 3 hours) or orders made by mistake (report within 15 minutes). No refunds for term violations.
+- **Prohibited Activities:** You may NOT download, save, screenshot, screen record, print, photocopy, scan, or share any notes (digital or printed). Sharing account credentials is also forbidden.
+- **Printed Purchases Terms:** Booklets are for personal use only and cannot be copied, scanned, photographed, or redistributed in any form.
+- **Anti-Piracy:** Content may contain digital watermarks. Violations are treated as copyright infringement.
+- **Enforcement:** Violating terms can lead to account suspension or a permanent ban, removal of access without refund, and potential legal action.
+- **Agreement:** Users must agree to terms at checkout.
+- **Availability:** Maximum expected downtime is 1 hour.
 
-- **User Manual for Topper's Toolkit Shop:**
-    - **Browsing:** Find subjects on the homepage, click a subject to see subcategories (e.g., Physics), then click a subcategory to see chapters.
-    - **Adding to Cart:** Choose between PDF (digital, view-only in Library) or Printed (physical booklet). Click "Add to Cart."
-    - **Print on Demand:** For custom documents, click "Go to Wormhole.app" to upload and get a link. Submit the link in our form. We will contact you on WhatsApp with a price.
-    - **Checkout:** In your cart, provide your name, class, and WhatsApp number. Choose a payment method.
-    - **Accessing Digital Notes:** Access is granted to the secure Library platform within 1–2 hours after order confirmation. Remember, digital notes are view-only.
+#### User Manual for Topper's Toolkit Shop
+- **Browsing:** Find subjects on the homepage, click a subject to see subcategories (e.g., Physics), then click a subcategory to see chapters.
+- **Adding to Cart:** Choose between PDF (digital, view-only in Library) or Printed (physical booklet). Click "Add to Cart."
+- **Print on Demand:** For custom documents, click "Go to Wormhole.app" to upload and get a link. Submit the link in our form. We will contact you on WhatsApp with a price.
+- **Checkout:** In your cart, provide your name, class, and WhatsApp number. Choose a payment method.
+- **Accessing Digital Notes:** Access is granted to the secure Library platform within 1–2 hours after order confirmation. Remember, digital notes are view-only.
 
 ---
 ### Topper's Toolkit Library
@@ -79,16 +79,22 @@ Topper's Toolkit includes the following websites. Analyze the student's doubt an
 - **Related Links:**
     - Terms: https://topperstoolkitviewer.netlify.app/terms
     - Manual: https://topperstoolkitviewer.netlify.app/user-manual
-- **How to Use This Website (User Manual):**
-    - **Step 1: Buy Notes from the Shop:** This website is for viewing notes you have already bought. First, you must buy the notes from our main shop website.
-    - **Step 2: Create Your Account Here:** After you buy the notes, come back to this website. Click on 'Register'. Use the same email address you used for your purchase. This is very important so we know which notes to give you access to!
-    - **Step 3: Find and Read Your Notes:** Once you are logged in, you can click on 'Browse' to see all the subjects and notes. You will only be able to open the notes that you have purchased.
-- **Very Important Rules for Library:**
-    - The notes you buy are for your personal use only. You do not own them.
-    - **Do NOT** share your account password. Your account is for you alone.
-    - **Do NOT** take screenshots, record your screen, or download the notes. The website is for viewing only.
-    - **Do NOT** try to sell or share the notes with others.
-    - If these rules are broken, your account will be immediately suspended without a refund, and we may take further action.
+
+#### Full Terms and Conditions for Topper's Toolkit Library
+- **Last Updated:** 10-08-2025
+- **Access Rights:** Access is granted only to verified purchasers from Topper’s Toolkit Shop. Your account is for personal use only. You do not own the content.
+- **Restrictions on Use:** Strictly prohibited from downloading, saving, copying, screenshotting, screen recording, or printing notes. Sharing your account login is also forbidden.
+- **Anti-Piracy:** We actively monitor for unauthorized sharing and may use digital tracking.
+- **Enforcement Actions:** Violations will result in immediate account suspension and possible legal action.
+- **Service Availability:** Maximum expected downtime is 1 hour.
+- **Access Timing:** Access is activated after transaction verification and may take 1–2 hours.
+- **Agreement:** Use of the platform implies full acceptance of these terms.
+
+#### How to Use This Website (User Manual)
+- **Step 1: Buy Notes from the Shop:** This website is for viewing notes you have already bought. First, you must buy the notes from our main shop website.
+- **Step 2: Create Your Account Here:** After you buy the notes, come back to this website. Click on 'Register'. Use the same email address you used for your purchase. This is very important so we know which notes to give you access to!
+- **Step 3: Find and Read Your Notes:** Once you are logged in, you can click on 'Browse' to see all the subjects and notes. You will only be able to open the notes that you have purchased.
+- **Very Important Rules for Library:** The notes are for personal use only. Do NOT share your account, screenshot, screen record, download, or sell the notes. Breaking rules leads to immediate suspension without refund.
 
 ---
 ### Topper's Toolkit Doubts
