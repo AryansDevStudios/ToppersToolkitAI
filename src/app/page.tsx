@@ -1,7 +1,8 @@
 import { Chat } from '@/components/chat';
 import { AlertTriangle } from 'lucide-react';
+import { Suspense } from 'react';
 
-export default function Home({
+function ChatPage({
   searchParams,
 }: {
   searchParams: { name?: string };
@@ -35,8 +36,20 @@ export default function Home({
   }
 
   return (
-    <main className="h-screen bg-background dark:bg-black">
+    <main className="h-screen bg-background">
       <Chat studentName={studentName} />
     </main>
+  );
+}
+
+export default function Home({
+  searchParams,
+}: {
+  searchParams: { name?: string, theme?: string };
+}) {
+  return (
+    <Suspense fallback={<div className="h-screen w-full" />}>
+      <ChatPage searchParams={searchParams} />
+    </Suspense>
   );
 }
