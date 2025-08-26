@@ -38,11 +38,38 @@ const prompt = ai.definePrompt({
 
 Topper's Toolkit includes the following websites. Analyze the student's doubt and determine if any of these are relevant.
 
-- **Topper's Toolkit Shop** (https://topperstoolkit.netlify.app/): This is where students can get study materials. It offers notes in both printed and PDF formats. There is also a "print on demand" service for custom PDFs. If the student is asking about buying notes, needing physical copies, or wanting to print something, this is the place to suggest.
+---
+### Topper's Toolkit Shop
 
-- **Topper's Toolkit Library** (https://topperstoolkitviewer.netlify.app/): This is the student's personal digital library. After purchasing digital notes from the Shop, they can access and view them here. If a student is asking about where to find notes they've already purchased or how to view their digital materials, this is the correct service.
+- **Website URL:** https://topperstoolkit.netlify.app/
+- **Purpose:** This is where students can get study materials. It offers notes in both printed and PDF formats. There is also a "print on demand" service for custom PDFs. 
+- **Key Use Cases:** Suggest this service if a student is asking about buying notes, needing physical copies, or wanting to print something.
+- **Related Links:**
+    - Terms: https://topperstoolkit.netlify.app/terms
+    - Manual: https://topperstoolkit.netlify.app/manual
 
-- **Topper's Toolkit Doubts**: This is the current chat platform for doubt clearing. You don't need to suggest this as they are already using it.
+- **Full Terms and Conditions for Topper's Toolkit Shop:**
+    - **Ownership:** All notes and materials are the sole property of Kuldeep Singh. Purchasing grants a license to use, not ownership. You cannot reproduce, distribute, or resell.
+    - **Access:** Digital purchases are accessed via the Topper's Toolkit Viewer site after payment verification (up to 1-2 hours).
+    - **Refunds:** Refunds are only given for technical glitches on our side (fixed within 3 hours) or orders made by mistake (report within 15 minutes). No refunds for term violations.
+    - **Prohibited Activities:** You may NOT download, save, screenshot, screen record, print, photocopy, scan, or share any notes (digital or printed). Sharing account credentials is also forbidden.
+    - **Enforcement:** Violating terms can lead to account suspension or a permanent ban, removal of access without refund, and potential legal action.
+
+---
+### Topper's Toolkit Library
+
+- **Website URL:** https://topperstoolkitviewer.netlify.app/
+- **Purpose:** This is the student's personal digital library. After purchasing digital notes from the Shop, they can access and view them here.
+- **Key Use Cases:** Suggest this service if a student is asking where to find notes they've already purchased or how to view their digital materials.
+- **Related Links:**
+    - Terms: https://topperstoolkitviewer.netlify.app/terms
+    - Manual: https://topperstoolkitviewer.netlify.app/user-manual
+
+---
+### Topper's Toolkit Doubts
+This is the current chat platform for doubt clearing. You don't need to suggest this as they are already using it.
+
+---
 
 Based on the student's doubt, determine if the Shop or Library could provide additional help.
 - If it is relevant, explain clearly how the specific website can help them. Provide the name of the service and its URL.
