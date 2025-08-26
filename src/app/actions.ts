@@ -11,6 +11,7 @@ import {
   orderBy,
   getDocs,
   limit,
+  Timestamp,
 } from 'firebase/firestore';
 
 export interface Message {
@@ -36,7 +37,11 @@ export async function getAiResponse(
   const lastUserMessage = currentMessages[currentMessages.length - 1];
 
   try {
-    await addDoc(collection(db, 'chats', studentName, 'messages'), lastUserMessage);
+    const userMessageForDb = {
+      ...lastUserMessage,
+      timestamp: serverTimestamp(),
+    };
+    await addDoc(collection(db, 'chats', studentName, 'messages'), userMessageForDb);
 
     const conversationHistoryText = formatHistory(currentMessages);
     
@@ -91,10 +96,16 @@ export async function getChatHistory(
     const messagesCol = collection(db, 'chats', studentName, 'messages');
     const q = query(messagesCol, orderBy('timestamp', 'asc'), limit(50));
     const querySnapshot = await getDocs(q);
-    const messages = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Message[];
+    const messages = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      const timestamp = data.timestamp as Timestamp;
+      return {
+        id: doc.id,
+        role: data.role,
+        content: data.content,
+        timestamp: timestamp ? timestamp.toDate().toISOString() : new Date().toISOString(),
+      };
+    }) as Message[];
     return messages;
   } catch (error) {
     console.error('Error fetching chat history:', error);

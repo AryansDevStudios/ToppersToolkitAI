@@ -51,7 +51,7 @@ export function Chat({ studentName }: { studentName: string }) {
     const userMessage: Message = {
       role: 'user',
       content: input,
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
     };
 
     const updatedMessages = [...messages, userMessage];
@@ -67,14 +67,14 @@ export function Chat({ studentName }: { studentName: string }) {
       const aiMessage: Message = {
         role: 'assistant',
         content: aiResponseContent,
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
       const errorMessage: Message = {
         role: 'assistant',
         content: "Sorry, I couldn't get a response. Please try again.",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -86,7 +86,7 @@ export function Chat({ studentName }: { studentName: string }) {
     <div className="flex h-full flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
       <Card className="w-full max-w-3xl h-full flex flex-col shadow-lg">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">
+          <CardTitle className="text-2xl font-bold text-sky-500">
             Topper's Iframe Assist
           </CardTitle>
           <CardDescription>
@@ -112,8 +112,8 @@ export function Chat({ studentName }: { studentName: string }) {
                   )}
                 >
                   {message.role === 'assistant' && (
-                    <Avatar className="h-8 w-8 border">
-                      <AvatarFallback>
+                    <Avatar className="h-8 w-8 border-2 border-sky-500">
+                       <AvatarFallback className="bg-sky-500 text-white">
                         <Bot className="h-5 w-5" />
                       </AvatarFallback>
                     </Avatar>
@@ -122,15 +122,15 @@ export function Chat({ studentName }: { studentName: string }) {
                     className={cn(
                       'max-w-xs rounded-lg p-3 text-sm md:max-w-md lg:max-w-2xl shadow-md',
                       message.role === 'user'
-                        ? 'bg-primary text-primary-foreground rounded-br-none'
-                        : 'bg-muted rounded-bl-none'
+                        ? 'bg-sky-500 text-white rounded-br-none'
+                        : 'bg-gray-200 dark:bg-gray-700 rounded-bl-none'
                     )}
                     style={{ whiteSpace: 'pre-wrap' }}
                   >
                     {message.content}
                   </div>
                   {message.role === 'user' && (
-                    <Avatar className="h-8 w-8 border">
+                     <Avatar className="h-8 w-8 border-2 border-gray-400">
                       <AvatarFallback>
                         <User className="h-5 w-5" />
                       </AvatarFallback>
@@ -147,9 +147,9 @@ export function Chat({ studentName }: { studentName: string }) {
                   </Avatar>
                   <div className="max-w-xs rounded-lg p-3 text-sm md:max-w-md lg:max-w-2xl bg-muted rounded-bl-none">
                     <div className="flex items-center gap-2">
-                      <Skeleton className="w-2 h-2 rounded-full animate-bounce" />
-                      <Skeleton className="w-2 h-2 rounded-full animate-bounce delay-150" />
-                      <Skeleton className="w-2 h-2 rounded-full animate-bounce delay-300" />
+                      <div className="w-2 h-2 rounded-full bg-sky-500 animate-bounce" />
+                      <div className="w-2 h-2 rounded-full bg-sky-500 animate-bounce delay-150" />
+                      <div className="w-2 h-2 rounded-full bg-sky-500 animate-bounce delay-300" />
                     </div>
                   </div>
                 </div>
@@ -162,7 +162,7 @@ export function Chat({ studentName }: { studentName: string }) {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your doubt here..."
-                className="flex-1 resize-none"
+                className="flex-1 resize-none rounded-full"
                 rows={1}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
@@ -176,7 +176,7 @@ export function Chat({ studentName }: { studentName: string }) {
                 type="submit"
                 size="icon"
                 disabled={isLoading || !input.trim()}
-                className="rounded-full flex-shrink-0"
+                className="rounded-full flex-shrink-0 bg-sky-500 hover:bg-sky-600"
               >
                 <Send className="h-4 w-4" />
                 <span className="sr-only">Send</span>
