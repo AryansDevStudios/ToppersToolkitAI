@@ -8,6 +8,9 @@ import { ThemeProvider } from '@/components/theme-provider';
 export const metadata: Metadata = {
   title: "Topper's Toolkit AI",
   description: 'AI-powered doubt solver for students',
+  icons: {
+    icon: 'https://raw.githubusercontent.com/AryansDevStudios/ToppersToolkit/refs/heads/main/public/icon/icon_app.ico',
+  },
 };
 
 export default function RootLayout({
