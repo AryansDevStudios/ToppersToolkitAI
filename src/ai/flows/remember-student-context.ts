@@ -36,7 +36,7 @@ const prompt = ai.definePrompt({
 
   Student Name: {{{studentName}}}
   Doubt: {{{doubt}}}
-  `, // Removed the example output format
+  `,
 });
 
 const clearStudentDoubtFlow = ai.defineFlow(
