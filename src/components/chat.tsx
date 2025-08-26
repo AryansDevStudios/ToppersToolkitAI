@@ -194,6 +194,7 @@ export function Chat({ studentName }: { studentName: string }) {
                   }
                 }}
                 disabled={isLoading}
+                style={{ overflow: 'hidden' }}
               />
               <Button
                 type="submit"
