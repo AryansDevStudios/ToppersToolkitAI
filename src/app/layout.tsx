@@ -5,7 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Suspense } from 'react';
 
 export const metadata: Metadata = {
-  title: "Topper's Iframe Assist",
+  title: "Topper's Toolkit Doubts",
   description: 'AI-powered doubt solver for students',
 };
 
