@@ -2,11 +2,11 @@ import { Chat } from '@/components/chat';
 import { AlertTriangle } from 'lucide-react';
 import { Suspense } from 'react';
 
-interface PageProps {
+function ChatPage({
+  searchParams,
+}: {
   searchParams?: { [key: string]: string | string[] | undefined };
-}
-
-function ChatPage({ searchParams }: PageProps) {
+}) {
   const studentName = searchParams?.name as string | undefined;
   const studentClass = searchParams?.class as string | undefined;
 
@@ -37,10 +37,14 @@ function ChatPage({ searchParams }: PageProps) {
   );
 }
 
-export default function Home({ searchParams }: PageProps) {
+export default function Home({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
   return (
     <Suspense fallback={<div className="h-screen w-full" />}>
-      <ChatPage searchParams={searchParams} />
+      <ChatPage searchParams={searchParams || {}} />
     </Suspense>
   );
 }
