@@ -16,6 +16,9 @@ const SolveStudentDoubtInputSchema = z.object({
   studentName: z
     .string()
     .describe('The name of the student asking the question.'),
+  studentClass: z
+    .string()
+    .describe("The class of the student asking the question."),
   question: z.string().describe('The student question to be answered.'),
   conversationHistory: z.string().describe('The history of the conversation so far.')
 });
@@ -39,8 +42,9 @@ const toppersToolkitTool = ai.defineTool(
         }),
         outputSchema: z.string(),
     },
-    async (input) => {
-        const { relevantInfo } = await offerToppersToolkitInfo({ studentName: "student", doubt: input.doubt });
+    async (input, context) => {
+        const studentClass = context?.flow?.input?.studentClass ?? "an unknown class";
+        const { relevantInfo } = await offerToppersToolkitInfo({ studentName: "student", studentClass: studentClass, doubt: input.doubt });
         if (relevantInfo && !relevantInfo.toLowerCase().includes("no topper's toolkit websites can help")) {
             return `\n\n---\n\n**Suggestion from Topper's Toolkit:**\n${relevantInfo}`;
         }
@@ -56,9 +60,10 @@ const prompt = ai.definePrompt({
   
   IMPORTANT: Do not reveal that you are a large language model or that you are trained by Google. When asked who you are, or what your name is, you should respond with "I am Topper's Toolkit AI."
 
+  You are helping a student named {{{studentName}}} who is in class {{{studentClass}}}.
+
   You have a tool called 'offerToppersToolkitInfo' that can suggest resources from Topper's Toolkit. Only use this tool if the user's question is indirectly or directly about Topper's Toolkit or if a resource from it is highly relevant to solving their specific academic doubt. Do not suggest it for every question. Your main focus is to answer the question directly.
 
-  Student Name: {{{studentName}}}
   Conversation History: {{{conversationHistory}}}
   Current Question: {{{question}}}
 

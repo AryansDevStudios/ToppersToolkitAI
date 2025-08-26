@@ -5,11 +5,12 @@ import { Suspense } from 'react';
 function ChatPage({
   searchParams,
 }: {
-  searchParams: { name?: string; theme?: string };
+  searchParams: { name?: string; class?: string; theme?: string };
 }) {
   const studentName = searchParams.name;
+  const studentClass = searchParams.class;
 
-  if (!studentName) {
+  if (!studentName || !studentClass) {
     return (
       <main className="flex h-screen w-full items-center justify-center bg-background p-4">
         <div className="flex flex-col items-center gap-4 text-center p-8 border-2 border-dashed rounded-2xl bg-card">
@@ -21,11 +22,11 @@ function ChatPage({
               Missing Information
             </h1>
             <p className="text-muted-foreground">
-              Student name not provided in the URL.
+              Student name or class not provided in the URL.
               <br />
               Please append{' '}
               <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
-                ?name=YourName
+                ?name=YourName&class=YourClass
               </code>{' '}
               to the address.
             </p>
@@ -37,7 +38,7 @@ function ChatPage({
 
   return (
     <main className="h-screen bg-background">
-      <Chat studentName={studentName} />
+      <Chat studentName={studentName} studentClass={studentClass} />
     </main>
   );
 }
@@ -45,7 +46,7 @@ function ChatPage({
 export default function Home({
   searchParams,
 }: {
-  searchParams: { name?: string, theme?: string };
+  searchParams: { name?: string; class?: string; theme?: string };
 }) {
   return (
     <Suspense fallback={<div className="h-screen w-full" />}>

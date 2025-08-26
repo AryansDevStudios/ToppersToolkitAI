@@ -13,6 +13,7 @@ import {z} from 'genkit';
 const OfferToppersToolkitInfoInputSchema = z.object({
   doubt: z.string().describe('The student\'s doubt or question.'),
   studentName: z.string().describe('The name of the student asking the doubt.'),
+  studentClass: z.string().describe("The student's class."),
 });
 export type OfferToppersToolkitInfoInput = z.infer<typeof OfferToppersToolkitInfoInputSchema>;
 
@@ -33,7 +34,7 @@ const prompt = ai.definePrompt({
   name: 'offerToppersToolkitInfoPrompt',
   input: {schema: OfferToppersToolkitInfoInputSchema},
   output: {schema: OfferToppersToolkitInfoOutputSchema},
-  prompt: `You are an AI assistant helping a student named {{studentName}} with their doubt: {{doubt}}.
+  prompt: `You are an AI assistant helping a student named {{studentName}} in class {{studentClass}} with their doubt: "{{doubt}}".
 
 Topper's Toolkit includes the following websites:
 - Library: A resource for educational materials.
