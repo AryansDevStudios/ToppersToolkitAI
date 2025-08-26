@@ -72,7 +72,7 @@ const prompt = ai.definePrompt({
   Current Question: {{{question}}}
 
   Answer the student's question based on the history and the new question.`,
-  model: 'googleai/gemini-1.5-flash-latest',
+  model: 'googleai/gemini-2.5-flash',
   tools: [toppersToolkitTool]
 });
 
