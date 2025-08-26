@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, FormEvent } from 'react';
-import { Bot, Send, User, BrainCircuit, Sparkles, PencilRuler, Paintbrush } from 'lucide-react';
+import { Bot, Send, User, BrainCircuit, Paintbrush, Copy, Check } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -10,11 +10,13 @@ import { cn } from '@/lib/utils';
 import { Skeleton } from './ui/skeleton';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function Chat({ studentName }: { studentName: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -56,6 +58,16 @@ export function Chat({ studentName }: { studentName: string }) {
       }
     }
   }, [input]);
+
+  const handleCopy = (content: string, id?: string) => {
+    if (!id) return;
+    navigator.clipboard.writeText(content).then(() => {
+      setCopiedMessageId(id);
+      setTimeout(() => {
+        setCopiedMessageId(null);
+      }, 2000);
+    });
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -99,6 +111,7 @@ export function Chat({ studentName }: { studentName: string }) {
   };
 
   return (
+    <TooltipProvider>
     <div className="flex h-screen w-full flex-col bg-gradient-to-br from-indigo-50 via-white to-violet-50 dark:from-gray-900 dark:via-gray-900/95 dark:to-violet-900/20">
       <header className="flex items-center justify-between p-4 border-b bg-white/80 dark:bg-gray-950/80 backdrop-blur-md shadow-sm">
         <div className="flex items-center gap-3">
@@ -131,9 +144,9 @@ export function Chat({ studentName }: { studentName: string }) {
             ) : (
               messages.map((message, index) => (
                 <div
-                  key={index}
+                  key={message.id || index}
                   className={cn(
-                    'flex items-start gap-3',
+                    'flex items-start gap-3 group/message',
                     message.role === 'user' ? 'justify-end' : 'justify-start'
                   )}
                 >
@@ -153,6 +166,24 @@ export function Chat({ studentName }: { studentName: string }) {
                     )}
                   >
                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                  </div>
+                  <div className="self-center">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-7 w-7 opacity-0 group-hover/message:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
+                          onClick={() => handleCopy(message.content, message.id)}
+                        >
+                          {copiedMessageId === message.id ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                          <span className="sr-only">Copy message</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {copiedMessageId === message.id ? 'Copied!' : 'Copy'}
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
                   {message.role === 'user' && (
                     <Avatar className="h-9 w-9 self-start shadow-md">
@@ -223,7 +254,6 @@ export function Chat({ studentName }: { studentName: string }) {
         </div>
       </footer>
     </div>
+    </TooltipProvider>
   );
 }
-
-    
