@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 function ChatPage({
   searchParams,
 }: {
-  searchParams: { name?: string };
+  searchParams: { name?: string; theme?: string };
 }) {
   const studentName = searchParams.name;
 
