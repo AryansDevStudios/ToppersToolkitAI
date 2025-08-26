@@ -10,7 +10,7 @@ export default function Home({
   if (!studentName) {
     return (
       <main className="flex h-screen w-full items-center justify-center bg-background p-4">
-        <div className="text-center">
+        <div className="text-center p-8 border rounded-lg shadow-md">
           <h1 className="text-2xl font-bold text-destructive">
             Missing Information
           </h1>
