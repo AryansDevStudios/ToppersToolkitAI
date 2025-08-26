@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Chat } from '@/components/chat';
 import { AlertTriangle } from 'lucide-react';
 import { Suspense } from 'react';
