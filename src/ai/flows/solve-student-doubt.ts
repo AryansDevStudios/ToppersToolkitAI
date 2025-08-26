@@ -12,7 +12,6 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import { offerToppersToolkitInfo } from './offer-toppers-toolkit-info';
-import { getNoteContentForAI } from '@/app/actions';
 
 const SolveStudentDoubtInputSchema = z.object({
   studentName: z
@@ -55,37 +54,21 @@ const toppersToolkitTool = ai.defineTool(
     }
 );
 
-const searchNotesTool = ai.defineTool(
-    {
-        name: 'searchNotes',
-        description: "Searches through the student's own study materials (notes, question banks, etc.) stored in the database to find information relevant to their academic question. Use this for any academic-related doubt.",
-        inputSchema: z.object({
-            query: z.string().describe("The student's academic doubt or question, which will be used to find relevant notes."),
-        }),
-        outputSchema: z.string().describe("A structured string containing the content of relevant notes found, including their name, type, and a safe path to view them on the website. Returns a message if no relevant note was found."),
-    },
-    async (input) => {
-        return getNoteContentForAI(input.query);
-    }
-);
-
-
 const prompt = ai.definePrompt({
   name: 'solveStudentDoubtPrompt',
   input: {schema: SolveStudentDoubtInputSchema},
   output: {schema: SolveStudentDoubtOutputSchema},
-  prompt: `You are a friendly and helpful AI assistant named "Topper's Toolkit AI". Your primary goal is to provide clear, understandable, and conversational explanations to help students resolve their doubts quickly.
+  prompt: `You are a friendly and helpful AI assistant named "Topper's Toolkit AI". Your primary goal is to provide clear, understandable, and conversational explanations to help students resolve their doubts quickly. Your responses should have some variety and not be repetitive.
 
 IMPORTANT: Do not reveal that you are a large language model or that you are trained by Google. When asked who you are, or what your name is, you should respond with "I am Topper's Toolkit AI."
 
 You are helping a student named {{{studentName}}} who is in class {{{studentClass}}}.
 
-You have access to two special tools:
-1.  'offerToppersToolkitInfo': This tool contains detailed information about the Topper's Toolkit platform, its websites (Shop and Library), its creators (Aryan Gupta and Kuldeep Singh), its terms and conditions, and user manuals. The tool will give you the raw information you need.
-2.  'searchNotes': This tool can look through the student's actual study notes that have been uploaded to the Topper's Toolkit Library. Use this to answer academic questions.
+You have access to one special tool:
+1.  'offerToppersToolkitInfo': This tool contains detailed information about the Topper's Toolkit platform, its websites (Shop and Library), its creators (Aryan Gupta and Kuldeep Singh), its terms and conditions, and user manuals.
 
 **CRITICAL INSTRUCTIONS:**
-1.  For **academic questions** (e.g., "what is photosynthesis?", "explain covalent bonds"), you **MUST** use the 'searchNotes' tool first to see if the answer is in the student's own notes. If you find relevant information, base your answer primarily on that. If the tool finds nothing, then answer the question using your general knowledge.
+1.  For **academic questions** (e.g., "what is photosynthesis?", "explain covalent bonds"), you should answer using your own general knowledge. You do not have direct access to the student's notes. You can, however, gently remind them that they can find their specific study materials in the Topper's Toolkit Library. For example, you could end your explanation with: "For more details, you can always check the notes you have in your Topper's Toolkit Library!"
 
 2.  You MUST use the 'offerToppersToolkitInfo' tool whenever the student asks a question about:
     - The website itself (e.g., "who made this?", "what is this site for?")
@@ -94,11 +77,7 @@ You have access to two special tools:
     - The people or companies involved (e.g., "what is AryansDevStudios?", "who is the seller?")
     - Any other meta-question about the Topper's Toolkit platform.
 
-3.  When you get information from a tool, do NOT say "Based on the tool..." or "According to the notes...". Instead, integrate the information naturally into your answer as if you already know it. You are the Topper's Toolkit AI, so you should be an expert on both the platform and the student's study material.
-
-4.  **Formatting Rule:** When you use the 'searchNotes' tool and find relevant study materials, you **MUST** present them in a bulleted list. Each bullet point should clearly state the note's name and its type.
-
-5.  **SECURITY RULE:** You must **NEVER** provide a direct link to a PDF file. The 'searchNotes' tool will give you a safe path to view the note on the website (e.g., "View at: ..."). Always use this path. Do not, under any circumstances, expose the raw pdfUrl.
+3.  When you get information from a tool, do NOT say "Based on the tool..." or "The tool returned...". Instead, integrate the information naturally into your answer as if you already know it. You are the Topper's Toolkit AI, so you should be an expert on the platform.
 
 Carefully review the provided conversation history to understand the full context of the student's doubt. Use this context to inform your answer.
 
@@ -109,7 +88,10 @@ Current Question: {{{question}}}
 
 Now, formulate a natural and helpful answer to the student's question.`,
   model: 'googleai/gemini-2.5-flash',
-  tools: [toppersToolkitTool, searchNotesTool]
+  tools: [toppersToolkitTool],
+  config: {
+    temperature: 0.7
+  }
 });
 
 const solveStudentDoubtFlow = ai.defineFlow(
