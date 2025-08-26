@@ -185,7 +185,7 @@ export function Chat({ studentName }: { studentName: string }) {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your doubt here..."
-                className="w-full pl-4 pr-20 py-3 text-base bg-gray-100 dark:bg-gray-800 border-2 border-transparent focus:border-primary rounded-2xl resize-none max-h-48 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:text-gray-100"
+                className="w-full pl-4 pr-20 py-3 text-base bg-gray-100 dark:bg-gray-800 border-2 border-transparent focus:border-primary rounded-2xl resize-none transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:text-gray-100"
                 rows={1}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
@@ -199,7 +199,7 @@ export function Chat({ studentName }: { studentName: string }) {
                 type="submit"
                 size="icon"
                 disabled={isLoading || !input.trim()}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-primary hover:bg-primary/90 transition-all duration-300 transform hover:scale-110 active:scale-100"
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-primary hover:bg-primary/90 transition-all duration-300 transform hover:scale-110 active:scale-100 flex items-center justify-center"
               >
                 <Send className="h-5 w-5" />
                 <span className="sr-only">Send</span>
