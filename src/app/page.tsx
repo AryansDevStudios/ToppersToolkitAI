@@ -2,13 +2,17 @@ import { Chat } from '@/components/chat';
 import { AlertTriangle } from 'lucide-react';
 import { Suspense } from 'react';
 
-function ChatPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-  const studentName = searchParams.name as string;
-  const studentClass = searchParams.class as string;
+interface ChatPageProps {
+  searchParams: {
+    name?: string;
+    class?: string;
+    theme?: string;
+  };
+}
+
+function ChatPage({ searchParams }: ChatPageProps) {
+  const studentName = searchParams.name;
+  const studentClass = searchParams.class;
 
   if (!studentName || !studentClass) {
     return (
