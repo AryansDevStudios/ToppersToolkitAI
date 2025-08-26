@@ -4,8 +4,9 @@
 import { Chat } from '@/components/chat';
 import { AlertTriangle } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function ChatPage() {
+function ChatPage() {
   const searchParams = useSearchParams();
   const studentName = searchParams.get('name') || undefined;
   const studentClass = searchParams.get('class') || undefined;
@@ -34,5 +35,13 @@ export default function ChatPage() {
     <main className="h-screen bg-background">
       <Chat studentName={studentName} studentClass={studentClass} />
     </main>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<div className="h-screen w-full bg-background" />}>
+      <ChatPage />
+    </Suspense>
   );
 }
