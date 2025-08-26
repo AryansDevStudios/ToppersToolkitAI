@@ -185,8 +185,8 @@ export function Chat({ studentName }: { studentName: string }) {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your doubt here..."
-                className="w-full pl-4 pr-20 py-3 text-base bg-gray-100 dark:bg-gray-800 border-2 border-transparent focus:border-primary rounded-2xl resize-none transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:text-gray-100"
-                rows={1}
+                className="w-full pl-4 pr-20 py-3 text-base bg-gray-100 dark:bg-gray-800 border-2 border-transparent focus:border-primary rounded-2xl resize-none transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:text-gray-100 max-h-64"
+                rows={2}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -194,7 +194,6 @@ export function Chat({ studentName }: { studentName: string }) {
                   }
                 }}
                 disabled={isLoading}
-                style={{ overflow: 'hidden' }}
               />
               <Button
                 type="submit"
