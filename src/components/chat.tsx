@@ -45,7 +45,15 @@ export function Chat({ studentName }: { studentName: string }) {
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.style.height = 'auto';
-      inputRef.current.style.height = `${inputRef.current.scrollHeight}px`;
+      const scrollHeight = inputRef.current.scrollHeight;
+      const maxHeight = 10 * 24; // 10 lines * 24px line-height (approx)
+      if (scrollHeight > maxHeight) {
+        inputRef.current.style.height = `${maxHeight}px`;
+        inputRef.current.style.overflowY = 'auto';
+      } else {
+        inputRef.current.style.height = `${scrollHeight}px`;
+        inputRef.current.style.overflowY = 'hidden';
+      }
     }
   }, [input]);
 
@@ -84,6 +92,9 @@ export function Chat({ studentName }: { studentName: string }) {
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+      if (inputRef.current) {
+        inputRef.current.style.height = 'auto'; // Reset height after submission
+      }
     }
   };
 
@@ -109,7 +120,7 @@ export function Chat({ studentName }: { studentName: string }) {
       </header>
 
       <main className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full" ref={scrollAreaRef}>
+        <ScrollArea className="h-full custom-scrollbar" ref={scrollAreaRef}>
           <div className="p-4 md:p-6 space-y-6">
             {isLoading && messages.length === 0 ? (
               <div className="space-y-4 p-4">
@@ -173,7 +184,7 @@ export function Chat({ studentName }: { studentName: string }) {
         </ScrollArea>
       </main>
 
-      <footer className="p-4 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-t border-gray-200 dark:border-gray-800/50">
+      <footer className="p-4 bg-white/80 dark:bg-[#18192b]/80 backdrop-blur-md border-t border-gray-200 dark:border-gray-800/50">
         <div className="max-w-3xl mx-auto">
           <form
             onSubmit={handleSubmit}
