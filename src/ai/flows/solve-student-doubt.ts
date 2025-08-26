@@ -43,7 +43,7 @@ const toppersToolkitTool = ai.defineTool(
         outputSchema: z.string(),
     },
     async (input, context) => {
-        const studentClass = context?.flow?.input?.studentClass ?? "an unknown class";
+      const studentClass = (context as any)?.flow?.input?.studentClass ?? "an unknown class";
         const { relevantInfo } = await offerToppersToolkitInfo({ studentName: "student", studentClass: studentClass, doubt: input.doubt });
         if (relevantInfo && !relevantInfo.toLowerCase().includes("no topper's toolkit websites can help")) {
             return `\n\n---\n\n**Suggestion from Topper's Toolkit:**\n${relevantInfo}`;
