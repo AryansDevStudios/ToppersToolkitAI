@@ -131,9 +131,7 @@ export async function clearChatHistory(studentName: string): Promise<{ success: 
   }
 }
 
-// NOTE: This is a simplified search. For production, you would want a more robust
-// full-text search solution like Algolia, Typesense, or an external vector DB.
-// This linear scan will be slow and expensive on large datasets.
+
 export async function getNoteContentForAI(queryText: string): Promise<string> {
     try {
         const subjectsSnapshot = await getDocs(collection(db, 'subjects'));
@@ -141,9 +139,44 @@ export async function getNoteContentForAI(queryText: string): Promise<string> {
             return "No study materials found in the database.";
         }
 
-        const queryLower = queryText.toLowerCase();
-        let relevantNotes: { name: string; type: string; path: string; score: number }[] = [];
+        const queryLower = queryText.toLowerCase().trim();
+        
+        // 1. Hierarchical Search: Check for exact matches on Subject, Sub-Subject, or Chapter
+        for (const subjectDoc of subjectsSnapshot.docs) {
+            const subjectData = subjectDoc.data();
+            const subjectId = subjectDoc.id;
 
+            // Level 1: Subject Match
+            if (subjectData.name?.toLowerCase() === queryLower) {
+                const subSubjectNames = (subjectData.subSubjects || []).map((ss: any) => ss.name).join(', ');
+                return `Found Subject: [Name: ${subjectData.name}]. It contains the following sub-subjects: ${subSubjectNames || 'None'}.`;
+            }
+
+            const subSubjects = subjectData.subSubjects || [];
+            for (const subSubject of subSubjects) {
+                // Level 2: Sub-Subject Match
+                if (subSubject.name?.toLowerCase() === queryLower) {
+                    const chapterNames = (subSubject.chapters || []).map((ch: any) => ch.name).join(', ');
+                    return `Found Sub-Subject: [Name: ${subSubject.name} in ${subjectData.name}]. It contains the following chapters: ${chapterNames || 'None'}.`;
+                }
+                
+                const chapters = subSubject.chapters || [];
+                for (const chapter of chapters) {
+                    // Level 3: Chapter Match
+                    if (chapter.name?.toLowerCase() === queryLower) {
+                        const notesList = (chapter.notes || []).map((note: any) => {
+                           const websitePath = `https://topperstoolkitviewer.netlify.app/browse/${subjectId}/${subSubject.id}/${chapter.id}`;
+                           return `Note Found: [Name: ${note.name}, Type: ${note.type}, View at: ${websitePath}]`;
+                        }).join('\n');
+                        return notesList || `Found Chapter: [Name: ${chapter.name}], but it contains no notes.`;
+                    }
+                }
+            }
+        }
+
+
+        // 2. Keyword Search (Fallback)
+        let relevantNotes: { name: string; type: string; path: string; score: number }[] = [];
         for (const subjectDoc of subjectsSnapshot.docs) {
             const subjectData = subjectDoc.data();
             const subjectId = subjectDoc.id;
@@ -154,7 +187,6 @@ export async function getNoteContentForAI(queryText: string): Promise<string> {
                 for (const chapter of chapters) {
                     const notes = chapter.notes || [];
                     for (const note of notes) {
-                        // Simple keyword matching for relevance scoring
                         let currentScore = 0;
                         const noteName = note.name?.toLowerCase() || '';
                         const chapterName = chapter.name?.toLowerCase() || '';
@@ -186,7 +218,6 @@ export async function getNoteContentForAI(queryText: string): Promise<string> {
         }
         
         if (relevantNotes.length > 0) {
-            // Sort by score and take the top 3
             relevantNotes.sort((a, b) => b.score - a.score);
             const topNotes = relevantNotes.slice(0, 3);
             
@@ -194,7 +225,7 @@ export async function getNoteContentForAI(queryText: string): Promise<string> {
             return formattedResponse;
         }
 
-        return "I couldn't find a specific note that directly addresses your question. I can try to answer using my general knowledge.";
+        return "I couldn't find a specific note or category that directly addresses your question. I can try to answer using my general knowledge.";
     } catch (error) {
         console.error("Error searching notes in Firestore:", error);
         return "There was an error trying to search through your notes.";
