@@ -1,15 +1,13 @@
-
 'use client';
 
 import { Chat } from '@/components/chat';
-import { AlertTriangle } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
+import { AlertTriangle } from 'lucide-react';
 
-function ChatPage() {
+export default function ChatPage() {
   const searchParams = useSearchParams();
-  const studentName = searchParams.get('name') || undefined;
-  const studentClass = searchParams.get('class') || undefined;
+  const studentName = searchParams.get('name');
+  const studentClass = searchParams.get('class');
 
   if (!studentName || !studentClass) {
     return (
@@ -35,13 +33,5 @@ function ChatPage() {
     <main className="h-screen bg-background">
       <Chat studentName={studentName} studentClass={studentClass} />
     </main>
-  );
-}
-
-export default function HomePage() {
-  return (
-    <Suspense fallback={<div className="h-screen w-full bg-background" />}>
-      <ChatPage />
-    </Suspense>
   );
 }
