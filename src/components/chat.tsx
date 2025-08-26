@@ -200,7 +200,7 @@ export function Chat({ studentName }: { studentName: string }) {
                 type="submit"
                 size="icon"
                 disabled={isLoading || !input.trim()}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-primary hover:bg-primary/90 transition-all duration-300 transform hover:scale-110 active:scale-100 flex items-center justify-center"
+                className="absolute right-3 bottom-3 w-10 h-10 rounded-full bg-primary hover:bg-primary/90 transition-all duration-300 transform hover:scale-110 active:scale-100 flex items-center justify-center"
               >
                 <Send className="h-5 w-5" />
                 <span className="sr-only">Send</span>
