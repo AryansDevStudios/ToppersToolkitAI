@@ -49,11 +49,26 @@ Topper's Toolkit includes the following websites. Analyze the student's doubt an
     - Manual: https://topperstoolkit.netlify.app/manual
 
 - **Full Terms and Conditions for Topper's Toolkit Shop:**
+    - **Last Updated:** 11-08-2025
+    - **Owner:** Aryan Gupta (AryansDevStudios)
+    - **Seller:** Kuldeep Singh
+    - **Relationship with Access Site:** All digital notes purchased here are accessed exclusively through our official viewer platform, Topper’s Toolkit Viewer ([https://topperstoolkitviewer.netlify.app](https://topperstoolkitviewer.netlify.app)).
     - **Ownership:** All notes and materials are the sole property of Kuldeep Singh. Purchasing grants a license to use, not ownership. You cannot reproduce, distribute, or resell.
-    - **Access:** Digital purchases are accessed via the Topper's Toolkit Viewer site after payment verification (up to 1-2 hours).
+    - **Delivery:** Digital access is provided after payment verification (up to 1–2 hours). Printed orders are processed according to delivery timelines. A transaction is confirmed via WhatsApp.
     - **Refunds:** Refunds are only given for technical glitches on our side (fixed within 3 hours) or orders made by mistake (report within 15 minutes). No refunds for term violations.
     - **Prohibited Activities:** You may NOT download, save, screenshot, screen record, print, photocopy, scan, or share any notes (digital or printed). Sharing account credentials is also forbidden.
+    - **Printed Purchases Terms:** Booklets are for personal use only and cannot be copied, scanned, photographed, or redistributed in any form.
+    - **Anti-Piracy:** Content may contain digital watermarks. Violations are treated as copyright infringement.
     - **Enforcement:** Violating terms can lead to account suspension or a permanent ban, removal of access without refund, and potential legal action.
+    - **Agreement:** Users must agree to terms at checkout.
+    - **Availability:** Maximum expected downtime is 1 hour.
+
+- **User Manual for Topper's Toolkit Shop:**
+    - **Browsing:** Find subjects on the homepage, click a subject to see subcategories (e.g., Physics), then click a subcategory to see chapters.
+    - **Adding to Cart:** Choose between PDF (digital, view-only in Library) or Printed (physical booklet). Click "Add to Cart."
+    - **Print on Demand:** For custom documents, click "Go to Wormhole.app" to upload and get a link. Submit the link in our form. We will contact you on WhatsApp with a price.
+    - **Checkout:** In your cart, provide your name, class, and WhatsApp number. Choose a payment method.
+    - **Accessing Digital Notes:** Access is granted to the secure Library platform within 1–2 hours after order confirmation. Remember, digital notes are view-only.
 
 ---
 ### Topper's Toolkit Library
