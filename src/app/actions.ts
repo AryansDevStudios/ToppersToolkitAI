@@ -68,7 +68,6 @@ export async function getAiResponse(
 
     return finalAnswer;
   } catch (error) {
-    console.error('Error getting AI response or saving to Firestore:', error);
     const errorMessage = "I'm having trouble connecting right now. Please try again in a moment.";
     const aiMessageForDb = {
       role: 'assistant',
@@ -99,7 +98,6 @@ export async function getChatHistory(
     }) as Message[];
     return messages;
   } catch (error) {
-    console.error('Error fetching chat history:', error);
     return [];
   }
 }

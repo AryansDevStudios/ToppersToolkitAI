@@ -4,53 +4,53 @@
 
 @layer base {
   :root {
-    --background: 240 10% 97%;
-    --foreground: 240 5% 10%;
-    --card: 240 10% 97%;
-    --card-foreground: 240 5% 10%;
-    --popover: 240 10% 97%;
-    --popover-foreground: 240 5% 10%;
-    --primary: 262 82% 57%;
+    --background: 220 13% 95%; /* light gray (#F0F2F5) */
+    --foreground: 240 5% 15%; /* dark gray (#262626) */
+    --card: 220 13% 95%;
+    --card-foreground: 240 5% 15%;
+    --popover: 220 13% 95%;
+    --popover-foreground: 240 5% 15%;
+    --primary: 211 100% 62%; /* sky blue (#3991FF) */
     --primary-foreground: 210 20% 98%;
     --secondary: 240 5% 90%;
     --secondary-foreground: 240 5% 10%;
     --muted: 240 5% 93%;
     --muted-foreground: 240 5% 45%;
-    --accent: 262 82% 57%;
+    --accent: 211 100% 62%; /* sky blue (#3991FF) */
     --accent-foreground: 210 20% 98%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 5% 85%;
     --input: 240 5% 88%;
-    --ring: 262 82% 57%;
+    --ring: 211 100% 62%; /* sky blue (#3991FF) */
     --radius: 0.75rem;
-    --chart-1: 262 82% 57%;
+    --chart-1: 211 100% 62%;
     --chart-2: 222 47% 31%;
     --chart-3: 173 58% 39%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
   }
   .dark {
-    --background: 240 5% 10%;
-    --foreground: 210 20% 98%;
-    --card: 240 5% 14%;
-    --card-foreground: 210 20% 98%;
-    --popover: 240 5% 10%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 262 82% 57%;
+    --background: 224 19% 12%; /* dark desaturated blue (#1A1D26) */
+    --foreground: 210 20% 88%; /* light off-white (#E0E0E0) */
+    --card: 224 19% 15%;
+    --card-foreground: 210 20% 88%;
+    --popover: 224 19% 12%;
+    --popover-foreground: 210 20% 88%;
+    --primary: 211 100% 62%; /* sky blue (#3991FF) */
     --primary-foreground: 210 20% 98%;
     --secondary: 240 5% 20%;
     --secondary-foreground: 210 20% 98%;
     --muted: 240 5% 24%;
     --muted-foreground: 240 5% 65%;
-    --accent: 262 82% 57%;
+    --accent: 211 100% 62%; /* sky blue (#3991FF) */
     --accent-foreground: 210 20% 98%;
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 5% 20%;
     --input: 240 5% 20%;
-    --ring: 262 82% 57%;
-    --chart-1: 262 82% 57%;
+    --ring: 211 100% 62%; /* sky blue (#3991FF) */
+    --chart-1: 211 100% 62%;
     --chart-2: 222 47% 31%;
     --chart-3: 173 58% 39%;
     --chart-4: 43 74% 66%;
