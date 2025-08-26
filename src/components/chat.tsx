@@ -146,7 +146,7 @@ export function Chat({ studentName }: { studentName: string }) {
                 <div
                   key={message.id || index}
                   className={cn(
-                    'flex items-start gap-3 group/message',
+                    'flex items-start gap-3',
                     message.role === 'user' ? 'justify-end' : 'justify-start'
                   )}
                 >
@@ -157,31 +157,31 @@ export function Chat({ studentName }: { studentName: string }) {
                       </AvatarFallback>
                     </Avatar>
                   )}
-                  <div
-                    className={cn(
-                      'prose prose-sm dark:prose-invert max-w-2xl rounded-2xl p-3 px-4 shadow-md',
-                      message.role === 'user'
-                        ? 'bg-primary text-primary-foreground rounded-br-lg prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-a:text-amber-300 hover:prose-a:text-amber-400 prose-code:text-primary-foreground'
-                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-bl-lg border border-gray-200 dark:border-gray-700'
-                    )}
-                  >
-                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
-                  </div>
-                  <div className="self-center">
-                    <Tooltip>
+                  <div className={cn('flex flex-col gap-1 w-full max-w-2xl', message.role === 'user' ? 'items-end' : 'items-start')}>
+                    <div
+                      className={cn(
+                        'prose prose-sm dark:prose-invert rounded-2xl p-3 px-4 shadow-md',
+                        message.role === 'user'
+                          ? 'bg-primary text-primary-foreground rounded-br-lg prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-a:text-amber-300 hover:prose-a:text-amber-400 prose-code:text-primary-foreground'
+                          : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-bl-lg border border-gray-200 dark:border-gray-700'
+                      )}
+                    >
+                       <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                    </div>
+                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
-                          size="icon"
+                          size="sm"
                           variant="ghost"
-                          className="h-7 w-7 opacity-0 group-hover/message:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
-                          onClick={() => handleCopy(message.content, message.id)}
+                          className="h-7 w-auto px-2 transition-opacity text-muted-foreground hover:text-foreground"
+                          onClick={() => handleCopy(message.content, message.id || `${index}`)}
                         >
-                          {copiedMessageId === message.id ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                          {copiedMessageId === (message.id || `${index}`) ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                           <span className="sr-only">Copy message</span>
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        {copiedMessageId === message.id ? 'Copied!' : 'Copy'}
+                        {copiedMessageId === (message.id || `${index}`) ? 'Copied!' : 'Copy'}
                       </TooltipContent>
                     </Tooltip>
                   </div>
