@@ -150,14 +150,28 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
     <div className="flex h-screen w-full flex-col bg-gradient-to-br from-indigo-50 via-white to-violet-50 dark:from-gray-900 dark:via-gray-900/95 dark:to-violet-900/20">
       <main className="flex-1 overflow-hidden">
         <ScrollArea className="h-full custom-scrollbar" ref={scrollAreaRef}>
-          <div className="p-4 md:p-6 space-y-6">
+          <div className="p-4 md:p-6 space-y-6 h-full">
             {isLoading && messages.length === 0 ? (
               <div className="space-y-4 p-4">
                 <Skeleton className="h-24 w-3/4 rounded-2xl bg-gray-200 dark:bg-gray-800" />
                 <Skeleton className="h-24 w-3/4 rounded-2xl ml-auto bg-gray-200 dark:bg-gray-800" />
                 <Skeleton className="h-24 w-2/3 rounded-2xl bg-gray-200 dark:bg-gray-800" />
               </div>
-            ) : (
+            ) : !isLoading && messages.length === 0 ? (
+                <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
+                    <div className="p-4 bg-primary/10 rounded-full border-4 border-primary/20">
+                        <BrainCircuit className="h-10 w-10 text-primary" />
+                    </div>
+                    <div className="space-y-1">
+                        <h2 className="text-2xl font-bold tracking-tight text-foreground">
+                            Welcome, {studentName}!
+                        </h2>
+                        <p className="text-muted-foreground">
+                            You can start a conversation by typing your doubt below.
+                        </p>
+                    </div>
+                </div>
+             ) : (
               messages.map((message, index) => (
                 <div
                   key={message.id || index}
