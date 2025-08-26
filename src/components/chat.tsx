@@ -157,7 +157,7 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                       className={cn(
                         'prose prose-sm dark:prose-invert rounded-2xl p-3 px-4 shadow-md',
                         message.role === 'user'
-                          ? 'bg-primary text-primary-foreground rounded-br-lg prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-a:text-amber-300 hover:prose-a:text-amber-400 prose-code:text-primary-foreground'
+                          ? 'bg-gradient-to-br from-primary to-violet-500 text-primary-foreground rounded-br-lg prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-a:text-amber-300 hover:prose-a:text-amber-400 prose-code:text-primary-foreground'
                           : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-bl-lg border border-gray-200 dark:border-gray-700'
                       )}
                     >
