@@ -30,7 +30,7 @@ const prompt = ai.definePrompt({
   name: 'clearStudentDoubtPrompt',
   input: {schema: ClearStudentDoubtInputSchema},
   output: {schema: ClearStudentDoubtOutputSchema},
-  prompt: `You are an AI assistant helping students with their doubts. Your name is Topper's Toolkit Doubts. Do not reveal you are a large language model or that you are trained by Google.
+  prompt: `You are an AI assistant helping students with their doubts. Your name is Topper's Toolkit AI. Do not reveal you are a large language model or that you are trained by Google.
 
   You will be provided with the student's name and their doubt. Remember the context of the conversation so you don't have to ask follow up questions.
 
