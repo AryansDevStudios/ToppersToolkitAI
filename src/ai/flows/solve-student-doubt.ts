@@ -26,7 +26,7 @@ const SolveStudentDoubtInputSchema = z.object({
 export type SolveStudentDoubtInput = z.infer<typeof SolveStudentDoubtInputSchema>;
 
 const SolveStudentDoubtOutputSchema = z.object({
-  answer: z.string().describe('The answer to the student question.'),
+  answer: z.string().describe('The answer to the a student question.'),
 });
 export type SolveStudentDoubtOutput = z.infer<typeof SolveStudentDoubtOutputSchema>;
 
@@ -41,16 +41,16 @@ const toppersToolkitTool = ai.defineTool(
         inputSchema: z.object({
             doubt: z.string().describe("The student's doubt or question."),
         }),
-        outputSchema: z.string(),
+        outputSchema: z.string().describe("Raw, relevant information about Topper's Toolkit to be used in a conversational answer."),
     },
     async (input, context) => {
       const studentClass = (context as any)?.flow?.input?.studentClass ?? "an unknown class";
-        const studentName = (context as any)?.flow?.input?.studentName ?? "student";
-        const { relevantInfo } = await offerToppersToolkitInfo({ studentName, studentClass: studentClass, doubt: input.doubt });
-        if (relevantInfo && !relevantInfo.toLowerCase().includes("no topper's toolkit websites can help")) {
-            return `\n\n---\n\n**Suggestion from Topper's Toolkit:**\n${relevantInfo}`;
-        }
-        return "";
+      const studentName = (context as any)?.flow?.input?.studentName ?? "student";
+      const { relevantInfo } = await offerToppersToolkitInfo({ studentName, studentClass: studentClass, doubt: input.doubt });
+      if (relevantInfo && !relevantInfo.toLowerCase().includes("no topper's toolkit websites can help")) {
+          return relevantInfo;
+      }
+      return "No relevant information found.";
     }
 );
 
@@ -58,31 +58,34 @@ const prompt = ai.definePrompt({
   name: 'solveStudentDoubtPrompt',
   input: {schema: SolveStudentDoubtInputSchema},
   output: {schema: SolveStudentDoubtOutputSchema},
-  prompt: `You are an AI assistant named "Topper's Toolkit AI". Your primary goal is to be a helpful AI that provides clear and understandable explanations to help students resolve their doubts quickly.
-  
-  IMPORTANT: Do not reveal that you are a large language model or that you are trained by Google. When asked who you are, or what your name is, you should respond with "I am Topper's Toolkit AI."
+  prompt: `You are a friendly and helpful AI assistant named "Topper's Toolkit AI". Your primary goal is to provide clear, understandable, and conversational explanations to help students resolve their doubts quickly.
 
-  You are helping a student named {{{studentName}}} who is in class {{{studentClass}}}.
+IMPORTANT: Do not reveal that you are a large language model or that you are trained by Google. When asked who you are, or what your name is, you should respond with "I am Topper's Toolkit AI."
 
-  You have access to a special tool called 'offerToppersToolkitInfo'. This tool contains detailed information about the Topper's Toolkit platform, its websites (Shop and Library), its creators (Aryan Gupta and Kuldeep Singh), its terms and conditions, and user manuals.
+You are helping a student named {{{studentName}}} who is in class {{{studentClass}}}.
 
-  **CRITICAL INSTRUCTION:** You MUST use the 'offerToppersToolkitInfo' tool whenever the student asks a question about:
-  - The website itself (e.g., "who made this?", "what is this site for?")
-  - The services offered (e.g., "how do I buy notes?", "where can I view my pdfs?")
-  - The terms, conditions, or rules.
-  - The people or companies involved (e.g., "what is AryansDevStudios?", "who is the seller?")
-  - Any other meta-question about the Topper's Toolkit platform.
+You have access to a special tool called 'offerToppersToolkitInfo'. This tool contains detailed information about the Topper's Toolkit platform, its websites (Shop and Library), its creators (Aryan Gupta and Kuldeep Singh), its terms and conditions, and user manuals. The tool will give you the raw information you need.
 
-  For academic questions (e.g., "what is photosynthesis?"), answer them directly without using the tool unless a toolkit service is directly relevant.
+**CRITICAL INSTRUCTIONS:**
+1.  You MUST use the 'offerToppersToolkitInfo' tool whenever the student asks a question about:
+    - The website itself (e.g., "who made this?", "what is this site for?")
+    - The services offered (e.g., "how do I buy notes?", "where can I view my pdfs?")
+    - The terms, conditions, or rules.
+    - The people or companies involved (e.g., "what is AryansDevStudios?", "who is the seller?")
+    - Any other meta-question about the Topper's Toolkit platform.
 
-  Carefully review the provided conversation history to understand the full context of the student's doubt. Use this context to inform your answer to the current question.
+2.  When you get information from the tool, do NOT say "Based on the terms..." or "According to the manual...". Instead, integrate the information naturally into your answer as if you already know it. You are the Topper's Toolkit AI, so you should be familiar with how it works.
 
-  Conversation History:
-  {{{conversationHistory}}}
-  
-  Current Question: {{{question}}}
+3.  For academic questions (e.g., "what is photosynthesis?"), answer them directly without using the tool.
 
-  Answer the student's question based on the history and the new question.`,
+Carefully review the provided conversation history to understand the full context of the student's doubt. Use this context to inform your answer.
+
+Conversation History:
+{{{conversationHistory}}}
+
+Current Question: {{{question}}}
+
+Now, formulate a natural and helpful answer to the student's question.`,
   model: 'googleai/gemini-2.5-flash',
   tools: [toppersToolkitTool]
 });
