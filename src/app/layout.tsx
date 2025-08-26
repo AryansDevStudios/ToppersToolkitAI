@@ -1,8 +1,8 @@
-import type {Metadata} from 'next';
+import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import { ThemeProvider } from '@/components/theme-provider';
 import { Suspense } from 'react';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: "Topper's Toolkit AI",
@@ -11,11 +11,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: { theme?: string };
 }>) {
+  const searchParams = new URLSearchParams();
+  const theme = searchParams.get('theme') || 'light';
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={cn(theme)} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -23,9 +28,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <Suspense fallback={<div />}>
-          <ThemeProvider>
-            {children}
-          </ThemeProvider>
+          {children}
         </Suspense>
         <Toaster />
       </body>
