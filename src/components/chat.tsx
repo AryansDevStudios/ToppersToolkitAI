@@ -12,6 +12,19 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
+const getInitials = (name: string) => {
+    if (!name) return '';
+    const nameParts = name.trim().split(' ').filter(Boolean);
+    if (nameParts.length === 1) {
+        return nameParts[0].charAt(0).toUpperCase();
+    }
+    return (
+        (nameParts[0].charAt(0) || '') +
+        (nameParts[nameParts.length - 1].charAt(0) || '')
+    ).toUpperCase();
+};
+
+
 export function Chat({ studentName }: { studentName: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -168,8 +181,8 @@ export function Chat({ studentName }: { studentName: string }) {
                   </div>
                   {message.role === 'user' && (
                     <Avatar className="h-9 w-9 self-start shadow-md">
-                      <AvatarFallback className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
-                        <User className="h-5 w-5" />
+                      <AvatarFallback className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold">
+                        {getInitials(studentName)}
                       </AvatarFallback>
                     </Avatar>
                   )}
