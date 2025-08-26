@@ -184,7 +184,7 @@ export function Chat({ studentName }: { studentName: string }) {
         </ScrollArea>
       </main>
 
-      <footer className="p-4 bg-white/80 dark:bg-[#18192b]/80 backdrop-blur-md border-t border-gray-200 dark:border-gray-800/50">
+      <footer className="p-4 bg-white/30 dark:bg-[#18192b]/30 backdrop-blur-md border-t border-gray-200 dark:border-gray-800/50">
         <div className="max-w-3xl mx-auto">
           <form
             onSubmit={handleSubmit}
@@ -225,3 +225,5 @@ export function Chat({ studentName }: { studentName: string }) {
     </div>
   );
 }
+
+    
