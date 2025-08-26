@@ -151,23 +151,23 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
     <div className="flex h-screen w-full flex-col bg-gradient-to-br from-indigo-50 via-white to-violet-50 dark:from-gray-900 dark:via-gray-900/95 dark:to-violet-900/20">
       <main className="flex-1 overflow-hidden">
         <ScrollArea className="h-full custom-scrollbar" ref={scrollAreaRef}>
-          <div className="p-4 md:p-6 space-y-6 h-full">
+          <div className="p-4 md:p-6 space-y-6">
             {isLoading && messages.length === 0 ? (
               <div className="space-y-4 p-4">
-                <Skeleton className="h-24 w-3/4 rounded-2xl bg-gray-200 dark:bg-gray-800" />
-                <Skeleton className="h-24 w-3/4 rounded-2xl ml-auto bg-gray-200 dark:bg-gray-800" />
-                <Skeleton className="h-24 w-2/3 rounded-2xl bg-gray-200 dark:bg-gray-800" />
+                <Skeleton className="h-20 w-3/4 rounded-2xl bg-gray-200 dark:bg-gray-800" />
+                <Skeleton className="h-20 w-3/4 rounded-2xl ml-auto bg-gray-200 dark:bg-gray-800" />
+                <Skeleton className="h-20 w-2/3 rounded-2xl bg-gray-200 dark:bg-gray-800" />
               </div>
             ) : !isLoading && messages.length === 0 ? (
-                <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
-                    <div className="p-4 bg-primary/10 rounded-full border-4 border-primary/20">
-                        <BrainCircuit className="h-10 w-10 text-primary" />
+                <div className="flex h-[calc(100vh-140px)] flex-col items-center justify-center gap-4 text-center p-4">
+                    <div className="p-3 bg-primary/10 rounded-full border-4 border-primary/20">
+                        <BrainCircuit className="h-8 w-8 md:h-10 md:w-10 text-primary" />
                     </div>
                     <div className="space-y-1">
-                        <h2 className="text-2xl font-bold tracking-tight text-foreground">
+                        <h2 className="text-xl md:text-2xl font-bold tracking-tight text-foreground">
                             Welcome, {studentName}!
                         </h2>
-                        <p className="text-muted-foreground">
+                        <p className="text-sm md:text-base text-muted-foreground">
                             You can start a conversation by typing your doubt below.
                         </p>
                     </div>
@@ -177,14 +177,14 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                 <div
                   key={message.id || index}
                   className={cn(
-                    'flex items-start gap-3',
+                    'flex items-start gap-2 md:gap-3',
                      message.role === 'system' ? 'justify-center' : message.role === 'user' ? 'justify-end' : 'justify-start'
                   )}
                 >
                   {message.role === 'assistant' && (
-                    <Avatar className="h-9 w-9 self-start shadow-md">
+                    <Avatar className="h-8 w-8 md:h-9 md:w-9 self-start shadow-md">
                       <AvatarFallback className="bg-gradient-to-br from-primary to-violet-500 text-white">
-                        <Bot className="h-5 w-5" />
+                        <Bot className="h-4 w-4 md:h-5 md:w-5" />
                       </AvatarFallback>
                     </Avatar>
                   )}
@@ -193,10 +193,11 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                         {message.content}
                       </div>
                    ) : (
-                    <div className={cn('flex flex-col gap-1 w-full max-w-2xl', message.role === 'user' ? 'items-end' : 'items-start')}>
+                    <div className={cn('flex flex-col gap-1 w-full max-w-[90%] md:max-w-2xl', message.role === 'user' ? 'items-end' : 'items-start')}>
                       <div
                         className={cn(
-                          'prose prose-sm dark:prose-invert rounded-2xl p-3 px-4 shadow-md',
+                          'prose prose-sm dark:prose-invert rounded-2xl p-3 px-4 shadow-sm',
+                          'prose-p:text-sm prose-p:md:text-base',
                           message.role === 'user'
                             ? 'bg-gradient-to-br from-primary to-violet-500 text-primary-foreground rounded-br-lg prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-a:text-amber-300 hover:prose-a:text-amber-400 prose-code:text-primary-foreground'
                             : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-bl-lg border border-gray-200 dark:border-gray-700'
@@ -223,7 +224,7 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                     </div>
                    )}
                   {message.role === 'user' && (
-                    <Avatar className="h-9 w-9 self-start shadow-md">
+                    <Avatar className="h-8 w-8 md:h-9 md:w-9 self-start shadow-md">
                       <AvatarFallback className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold">
                         {getInitials(studentName)}
                       </AvatarFallback>
@@ -234,9 +235,9 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
             )}
             {isLoading && messages.length > 0 && (
               <div className="flex items-start gap-3 justify-start">
-                <Avatar className="h-9 w-9 shadow-md">
+                <Avatar className="h-8 w-8 md:h-9 md:w-9 shadow-md">
                    <AvatarFallback className="bg-gradient-to-br from-primary to-violet-500 text-white">
-                        <Bot className="h-5 w-5" />
+                        <Bot className="h-4 w-4 md:h-5 md:w-5" />
                       </AvatarFallback>
                 </Avatar>
                 <div className="max-w-xs rounded-2xl p-3 px-4 text-sm md:max-w-md lg:max-w-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
@@ -252,11 +253,11 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
         </ScrollArea>
       </main>
 
-      <footer className="p-4 bg-white/30 dark:bg-[#18192b]/30 backdrop-blur-md border-t border-gray-200 dark:border-gray-800/50">
+      <footer className="p-2 md:p-4 bg-white/30 dark:bg-[#18192b]/30 backdrop-blur-md border-t border-gray-200 dark:border-gray-800/50">
         <div className="max-w-3xl mx-auto">
           <form
             onSubmit={handleSubmit}
-            className="flex items-end gap-3"
+            className="flex items-end gap-2 md:gap-3"
           >
             <div className="flex-1 relative">
               <textarea
@@ -264,8 +265,8 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your doubt here..."
-                className="w-full pl-4 pr-20 py-3 text-base bg-gray-100 dark:bg-gray-800 border-2 border-transparent focus:border-primary rounded-2xl resize-none transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:text-gray-100 max-h-48 custom-scrollbar"
-                rows={2}
+                className="w-full pl-3 pr-16 py-2.5 md:pl-4 md:pr-20 md:py-3 text-sm md:text-base bg-gray-100 dark:bg-gray-800 border-2 border-transparent focus:border-primary rounded-xl md:rounded-2xl resize-none transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:text-gray-100 max-h-48 custom-scrollbar"
+                rows={1}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -278,9 +279,9 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                 type="submit"
                 size="icon"
                 disabled={isLoading || !input.trim()}
-                className="absolute right-3 bottom-3 w-10 h-10 rounded-full bg-primary hover:bg-primary/90 transition-all duration-300 transform hover:scale-110 active:scale-100 flex items-center justify-center"
+                className="absolute right-2 bottom-[7px] md:right-3 md:bottom-3 w-9 h-9 md:w-10 md:h-10 rounded-full bg-primary hover:bg-primary/90 transition-all duration-300 transform hover:scale-110 active:scale-100 flex items-center justify-center"
               >
-                <Send className="h-5 w-5" />
+                <Send className="h-4 w-4 md:h-5 md:w-5" />
                 <span className="sr-only">Send</span>
               </Button>
             </div>
