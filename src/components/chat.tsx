@@ -113,25 +113,6 @@ export function Chat({ studentName }: { studentName: string }) {
   return (
     <TooltipProvider>
     <div className="flex h-screen w-full flex-col bg-gradient-to-br from-indigo-50 via-white to-violet-50 dark:from-gray-900 dark:via-gray-900/95 dark:to-violet-900/20">
-      <header className="flex items-center justify-between p-4 border-b bg-white/80 dark:bg-gray-950/80 backdrop-blur-md shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-             <Avatar className="h-12 w-12 border-2 border-primary/50 shadow-lg">
-                <AvatarFallback className="bg-gradient-to-br from-primary to-violet-500 text-white">
-                  <BrainCircuit className="h-6 w-6" />
-                </AvatarFallback>
-              </Avatar>
-            <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-green-500 border-2 border-white dark:border-gray-950" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-gray-800 dark:text-gray-100">Topper's Toolkit Doubts</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Ready to help, {studentName}!
-            </p>
-          </div>
-        </div>
-      </header>
-
       <main className="flex-1 overflow-hidden">
         <ScrollArea className="h-full custom-scrollbar" ref={scrollAreaRef}>
           <div className="p-4 md:p-6 space-y-6">
