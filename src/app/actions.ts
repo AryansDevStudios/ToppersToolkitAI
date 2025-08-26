@@ -1,8 +1,7 @@
 'use server';
 
 import { db } from '@/lib/firebase';
-import { clearStudentDoubt } from '@/ai/flows/remember-student-context';
-import { offerToppersToolkitInfo } from '@/ai/flows/offer-toppers-toolkit-info';
+import { solveStudentDoubt } from '@/ai/flows/solve-student-doubt';
 import {
   collection,
   addDoc,
@@ -18,7 +17,7 @@ export interface Message {
   id?: string;
   role: 'user' | 'assistant';
   content: string;
-  timestamp: any;
+  timestamp: string;
 }
 
 function formatHistory(messages: Message[]): string {
@@ -38,53 +37,45 @@ export async function getAiResponse(
 
   try {
     const userMessageForDb = {
-      ...lastUserMessage,
+      role: lastUserMessage.role,
+      content: lastUserMessage.content,
       timestamp: serverTimestamp(),
     };
     await addDoc(collection(db, 'chats', studentName, 'messages'), userMessageForDb);
 
-    const conversationHistoryText = formatHistory(currentMessages);
+    const conversationHistoryText = formatHistory(currentMessages.slice(0, -1));
     
-    const [mainAnswerResponse, toolkitInfoResponse] = await Promise.all([
-      clearStudentDoubt({
+    const mainAnswerResponse = await solveStudentDoubt({
         studentName,
-        doubt: conversationHistoryText,
-      }),
-      offerToppersToolkitInfo({
-        studentName,
-        doubt: lastUserMessage.content,
-      }),
-    ]);
-
-    let finalAnswer = mainAnswerResponse.answer;
-
-    if (
-      toolkitInfoResponse.relevantInfo &&
-      !toolkitInfoResponse.relevantInfo
-        .toLowerCase()
-        .includes("no topper's toolkit websites can help")
-    ) {
-      finalAnswer += `\n\n---\n\n**Suggestion from Topper's Toolkit:**\n${toolkitInfoResponse.relevantInfo}`;
-    }
+        question: lastUserMessage.content,
+        conversationHistory: conversationHistoryText
+    });
+   
+    const finalAnswer = mainAnswerResponse.answer;
 
     const aiMessage: Message = {
       role: 'assistant',
       content: finalAnswer,
-      timestamp: serverTimestamp(),
+      timestamp: new Date().toISOString(),
     };
 
-    await addDoc(collection(db, 'chats', studentName, 'messages'), aiMessage);
+    const aiMessageForDb = {
+        role: aiMessage.role,
+        content: aiMessage.content,
+        timestamp: serverTimestamp()
+    };
+    await addDoc(collection(db, 'chats', studentName, 'messages'), aiMessageForDb);
 
     return finalAnswer;
   } catch (error) {
     console.error('Error getting AI response or saving to Firestore:', error);
     const errorMessage = "I'm having trouble connecting right now. Please try again in a moment.";
-    const aiMessage: Message = {
+    const aiMessageForDb = {
       role: 'assistant',
       content: errorMessage,
       timestamp: serverTimestamp(),
     };
-    await addDoc(collection(db, 'chats', studentName, 'messages'), aiMessage);
+    await addDoc(collection(db, 'chats', studentName, 'messages'), aiMessageForDb);
     return errorMessage;
   }
 }
