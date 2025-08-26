@@ -62,7 +62,7 @@ const searchNotesTool = ai.defineTool(
         inputSchema: z.object({
             query: z.string().describe("The student's academic doubt or question, which will be used to find relevant notes."),
         }),
-        outputSchema: z.string().describe("The content of the relevant note found, or a message if no relevant note was found."),
+        outputSchema: z.string().describe("A structured string containing the content of relevant notes found, including their name, type, and a safe path to view them on the website. Returns a message if no relevant note was found."),
     },
     async (input) => {
         return getNoteContentForAI(input.query);
@@ -95,6 +95,10 @@ You have access to two special tools:
     - Any other meta-question about the Topper's Toolkit platform.
 
 3.  When you get information from a tool, do NOT say "Based on the tool..." or "According to the notes...". Instead, integrate the information naturally into your answer as if you already know it. You are the Topper's Toolkit AI, so you should be an expert on both the platform and the student's study material.
+
+4.  **Formatting Rule:** When you use the 'searchNotes' tool and find relevant study materials, you **MUST** present them in a bulleted list. Each bullet point should clearly state the note's name and its type.
+
+5.  **SECURITY RULE:** You must **NEVER** provide a direct link to a PDF file. The 'searchNotes' tool will give you a safe path to view the note on the website (e.g., "View at: ..."). Always use this path. Do not, under any circumstances, expose the raw pdfUrl.
 
 Carefully review the provided conversation history to understand the full context of the student's doubt. Use this context to inform your answer.
 

@@ -134,18 +134,19 @@ export async function clearChatHistory(studentName: string): Promise<{ success: 
 // NOTE: This is a simplified search. For production, you would want a more robust
 // full-text search solution like Algolia, Typesense, or an external vector DB.
 // This linear scan will be slow and expensive on large datasets.
-export async function getNoteContentForAI(query: string): Promise<string> {
+export async function getNoteContentForAI(queryText: string): Promise<string> {
     try {
         const subjectsSnapshot = await getDocs(collection(db, 'subjects'));
         if (subjectsSnapshot.empty) {
             return "No study materials found in the database.";
         }
 
-        const queryLower = query.toLowerCase();
-        let mostRelevantNote: { content: string; score: number } = { content: '', score: 0 };
+        const queryLower = queryText.toLowerCase();
+        let relevantNotes: { name: string; type: string; path: string; score: number }[] = [];
 
         for (const subjectDoc of subjectsSnapshot.docs) {
             const subjectData = subjectDoc.data();
+            const subjectId = subjectDoc.id;
             const subSubjects = subjectData.subSubjects || [];
 
             for (const subSubject of subSubjects) {
@@ -155,7 +156,6 @@ export async function getNoteContentForAI(query: string): Promise<string> {
                     for (const note of notes) {
                         // Simple keyword matching for relevance scoring
                         let currentScore = 0;
-                        const noteContent = note.pdfUrl || ''; // Assuming content is in pdfUrl for now. This would be the extracted text in a real scenario.
                         const noteName = note.name?.toLowerCase() || '';
                         const chapterName = chapter.name?.toLowerCase() || '';
                         const subSubjectName = subSubject.name?.toLowerCase() || '';
@@ -166,27 +166,32 @@ export async function getNoteContentForAI(query: string): Promise<string> {
                         if (subSubjectName.includes(queryLower)) currentScore += 2;
                         if (subjectName.includes(queryLower)) currentScore += 1;
                         queryLower.split(' ').forEach(word => {
-                            if (noteContent.toLowerCase().includes(word)) {
-                                currentScore += 0.1;
+                            if (note.name?.toLowerCase().includes(word)) {
+                                currentScore += 0.5;
                             }
-                        })
+                        });
 
-                        // In a real implementation, you would fetch the content from pdfUrl,
-                        // extract the text, and use that for the search.
-                        // For now, we'll return metadata as a placeholder for the content.
-                        const foundContent = `Content from: ${subjectData.name} -> ${subSubject.name} -> ${chapter.name} -> ${note.name}. PDF is at ${note.pdfUrl}.`;
-
-
-                        if (currentScore > mostRelevantNote.score) {
-                            mostRelevantNote = { content: foundContent, score: currentScore };
+                        if (currentScore > 0) {
+                            const websitePath = `https://topperstoolkitviewer.netlify.app/browse/${subjectId}/${subSubject.id}/${chapter.id}`;
+                            relevantNotes.push({
+                                name: note.name,
+                                type: note.type,
+                                path: websitePath,
+                                score: currentScore
+                            });
                         }
                     }
                 }
             }
         }
-
-        if (mostRelevantNote.score > 0) {
-            return mostRelevantNote.content;
+        
+        if (relevantNotes.length > 0) {
+            // Sort by score and take the top 3
+            relevantNotes.sort((a, b) => b.score - a.score);
+            const topNotes = relevantNotes.slice(0, 3);
+            
+            const formattedResponse = topNotes.map(n => `Note Found: [Name: ${n.name}, Type: ${n.type}, View at: ${n.path}]`).join('\n');
+            return formattedResponse;
         }
 
         return "I couldn't find a specific note that directly addresses your question. I can try to answer using my general knowledge.";
