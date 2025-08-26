@@ -12,6 +12,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import { offerToppersToolkitInfo } from './offer-toppers-toolkit-info';
+import { getNoteContentForAI } from '@/app/actions';
 
 const SolveStudentDoubtInputSchema = z.object({
   studentName: z
@@ -54,6 +55,21 @@ const toppersToolkitTool = ai.defineTool(
     }
 );
 
+const searchNotesTool = ai.defineTool(
+    {
+        name: 'searchNotes',
+        description: "Searches through the student's own study materials (notes, question banks, etc.) stored in the database to find information relevant to their academic question. Use this for any academic-related doubt.",
+        inputSchema: z.object({
+            query: z.string().describe("The student's academic doubt or question, which will be used to find relevant notes."),
+        }),
+        outputSchema: z.string().describe("The content of the relevant note found, or a message if no relevant note was found."),
+    },
+    async (input) => {
+        return getNoteContentForAI(input.query);
+    }
+);
+
+
 const prompt = ai.definePrompt({
   name: 'solveStudentDoubtPrompt',
   input: {schema: SolveStudentDoubtInputSchema},
@@ -64,19 +80,21 @@ IMPORTANT: Do not reveal that you are a large language model or that you are tra
 
 You are helping a student named {{{studentName}}} who is in class {{{studentClass}}}.
 
-You have access to a special tool called 'offerToppersToolkitInfo'. This tool contains detailed information about the Topper's Toolkit platform, its websites (Shop and Library), its creators (Aryan Gupta and Kuldeep Singh), its terms and conditions, and user manuals. The tool will give you the raw information you need.
+You have access to two special tools:
+1.  'offerToppersToolkitInfo': This tool contains detailed information about the Topper's Toolkit platform, its websites (Shop and Library), its creators (Aryan Gupta and Kuldeep Singh), its terms and conditions, and user manuals. The tool will give you the raw information you need.
+2.  'searchNotes': This tool can look through the student's actual study notes that have been uploaded to the Topper's Toolkit Library. Use this to answer academic questions.
 
 **CRITICAL INSTRUCTIONS:**
-1.  You MUST use the 'offerToppersToolkitInfo' tool whenever the student asks a question about:
+1.  For **academic questions** (e.g., "what is photosynthesis?", "explain covalent bonds"), you **MUST** use the 'searchNotes' tool first to see if the answer is in the student's own notes. If you find relevant information, base your answer primarily on that. If the tool finds nothing, then answer the question using your general knowledge.
+
+2.  You MUST use the 'offerToppersToolkitInfo' tool whenever the student asks a question about:
     - The website itself (e.g., "who made this?", "what is this site for?")
     - The services offered (e.g., "how do I buy notes?", "where can I view my pdfs?")
     - The terms, conditions, or rules.
     - The people or companies involved (e.g., "what is AryansDevStudios?", "who is the seller?")
     - Any other meta-question about the Topper's Toolkit platform.
 
-2.  When you get information from the tool, do NOT say "Based on the terms..." or "According to the manual...". Instead, integrate the information naturally into your answer as if you already know it. You are the Topper's Toolkit AI, so you should be familiar with how it works.
-
-3.  For academic questions (e.g., "what is photosynthesis?"), answer them directly without using the tool.
+3.  When you get information from a tool, do NOT say "Based on the tool..." or "According to the notes...". Instead, integrate the information naturally into your answer as if you already know it. You are the Topper's Toolkit AI, so you should be an expert on both the platform and the student's study material.
 
 Carefully review the provided conversation history to understand the full context of the student's doubt. Use this context to inform your answer.
 
@@ -87,7 +105,7 @@ Current Question: {{{question}}}
 
 Now, formulate a natural and helpful answer to the student's question.`,
   model: 'googleai/gemini-2.5-flash',
-  tools: [toppersToolkitTool]
+  tools: [toppersToolkitTool, searchNotesTool]
 });
 
 const solveStudentDoubtFlow = ai.defineFlow(
