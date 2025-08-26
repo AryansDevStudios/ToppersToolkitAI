@@ -230,7 +230,7 @@ export function Chat({ studentName }: { studentName: string }) {
             </div>
           </form>
           <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
-            Powered by <Paintbrush className="inline-block h-3 w-3 text-violet-500" /> Topper's Toolkit Doubts
+            A product of Topper's Toolkit, under AryansDevStudios
           </p>
         </div>
       </footer>
