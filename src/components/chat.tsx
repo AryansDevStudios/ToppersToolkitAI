@@ -5,7 +5,7 @@ import { Bot, Send, User, BrainCircuit, Paintbrush, Copy, Check } from 'lucide-r
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { getAiResponse, getChatHistory, type Message } from '@/app/actions';
+import { getAiResponse, getChatHistory, clearChatHistory, type Message } from '@/app/actions';
 import { cn } from '@/lib/utils';
 import { Skeleton } from './ui/skeleton';
 import ReactMarkdown from 'react-markdown';
@@ -86,6 +86,27 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
+    if (input.trim() === '{clearHistory}') {
+      setIsLoading(true);
+      const result = await clearChatHistory(studentName);
+      if (result.success) {
+        setMessages([{
+          role: 'system',
+          content: 'Your chat history has been cleared.',
+          timestamp: new Date().toISOString(),
+        }]);
+      } else {
+        setMessages(prev => [...prev, {
+          role: 'system',
+          content: 'Sorry, there was an error clearing your history.',
+          timestamp: new Date().toISOString(),
+        }]);
+      }
+      setInput('');
+      setIsLoading(false);
+      return;
+    }
+
     const userMessage: Message = {
       role: 'user',
       content: input,
@@ -142,7 +163,7 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                   key={message.id || index}
                   className={cn(
                     'flex items-start gap-3',
-                    message.role === 'user' ? 'justify-end' : 'justify-start'
+                     message.role === 'system' ? 'justify-center' : message.role === 'user' ? 'justify-end' : 'justify-start'
                   )}
                 >
                   {message.role === 'assistant' && (
@@ -152,34 +173,40 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                       </AvatarFallback>
                     </Avatar>
                   )}
-                  <div className={cn('flex flex-col gap-1 w-full max-w-2xl', message.role === 'user' ? 'items-end' : 'items-start')}>
-                    <div
-                      className={cn(
-                        'prose prose-sm dark:prose-invert rounded-2xl p-3 px-4 shadow-md',
-                        message.role === 'user'
-                          ? 'bg-gradient-to-br from-primary to-violet-500 text-primary-foreground rounded-br-lg prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-a:text-amber-300 hover:prose-a:text-amber-400 prose-code:text-primary-foreground'
-                          : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-bl-lg border border-gray-200 dark:border-gray-700'
-                      )}
-                    >
-                       <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                   {message.role === 'system' ? (
+                     <div className="text-center text-xs text-muted-foreground py-2 px-4 rounded-full bg-card border">
+                        {message.content}
+                      </div>
+                   ) : (
+                    <div className={cn('flex flex-col gap-1 w-full max-w-2xl', message.role === 'user' ? 'items-end' : 'items-start')}>
+                      <div
+                        className={cn(
+                          'prose prose-sm dark:prose-invert rounded-2xl p-3 px-4 shadow-md',
+                          message.role === 'user'
+                            ? 'bg-gradient-to-br from-primary to-violet-500 text-primary-foreground rounded-br-lg prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-a:text-amber-300 hover:prose-a:text-amber-400 prose-code:text-primary-foreground'
+                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-bl-lg border border-gray-200 dark:border-gray-700'
+                        )}
+                      >
+                         <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                      </div>
+                       <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 w-auto px-2 transition-opacity text-muted-foreground hover:text-foreground"
+                            onClick={() => handleCopy(message.content, message.id || `${index}`)}
+                          >
+                            {copiedMessageId === (message.id || `${index}`) ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                            <span className="sr-only">Copy message</span>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {copiedMessageId === (message.id || `${index}`) ? 'Copied!' : 'Copy'}
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
-                     <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-7 w-auto px-2 transition-opacity text-muted-foreground hover:text-foreground"
-                          onClick={() => handleCopy(message.content, message.id || `${index}`)}
-                        >
-                          {copiedMessageId === (message.id || `${index}`) ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
-                          <span className="sr-only">Copy message</span>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {copiedMessageId === (message.id || `${index}`) ? 'Copied!' : 'Copy'}
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
+                   )}
                   {message.role === 'user' && (
                     <Avatar className="h-9 w-9 self-start shadow-md">
                       <AvatarFallback className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold">

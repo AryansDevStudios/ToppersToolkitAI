@@ -11,11 +11,14 @@ import {
   getDocs,
   limit,
   Timestamp,
+  doc,
+  deleteDoc,
+  writeBatch,
 } from 'firebase/firestore';
 
 export interface Message {
   id?: string;
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: string;
 }
@@ -101,5 +104,27 @@ export async function getChatHistory(
     return messages;
   } catch (error) {
     return [];
+  }
+}
+
+export async function clearChatHistory(studentName: string): Promise<{ success: boolean }> {
+  try {
+    const messagesColRef = collection(db, 'chats', studentName, 'messages');
+    const querySnapshot = await getDocs(messagesColRef);
+    
+    if (querySnapshot.empty) {
+        return { success: true };
+    }
+
+    const batch = writeBatch(db);
+    querySnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+    
+    await batch.commit();
+    return { success: true };
+  } catch (error) {
+    console.error("Error clearing chat history: ", error);
+    return { success: false };
   }
 }
