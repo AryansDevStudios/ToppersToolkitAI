@@ -22,13 +22,7 @@ function ChatPage({
               Missing Information
             </h1>
             <p className="text-muted-foreground">
-              Student name or class not provided in the URL.
-              <br />
-              Please append{' '}
-              <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
-                ?name=YourName&class=YourClass
-              </code>{' '}
-              to the address.
+              We see that there is a technical glitch on our side please contact the site developer
             </p>
           </div>
         </div>
