@@ -148,8 +148,11 @@ export async function getNoteContentForAI(queryText: string): Promise<string> {
 
             // Level 1: Subject Match
             if (subjectData.name?.toLowerCase() === queryLower) {
-                const subSubjectNames = (subjectData.subSubjects || []).map((ss: any) => ss.name).join(', ');
-                return `Found Subject: [Name: ${subjectData.name}]. It contains the following sub-subjects: ${subSubjectNames || 'None'}.`;
+                const subSubjectsDetails = (subjectData.subSubjects || []).map((ss: any) => {
+                    const chapterNames = (ss.chapters || []).map((ch: any) => ch.name).join(', ');
+                    return `Sub-Subject: ${ss.name} (Chapters: ${chapterNames || 'None'})`;
+                }).join('; ');
+                return `Found Subject: [Name: ${subjectData.name}]. It contains the following: ${subSubjectsDetails || 'No sub-subjects'}.`;
             }
 
             const subSubjects = subjectData.subSubjects || [];
