@@ -52,7 +52,7 @@ Topper's Toolkit includes the following websites. Analyze the student's doubt an
     - **Last Updated:** 11-08-2025
     - **Owner:** Aryan Gupta (AryansDevStudios)
     - **Seller:** Kuldeep Singh
-    - **Relationship with Access Site:** All digital notes purchased here are accessed exclusively through our official viewer platform, Topper’s Toolkit Viewer ([https://topperstoolkitviewer.netlify.app](https://topperstoolkitviewer.netlify.app)).
+    - **Relationship with Access Site:** All digital notes purchased here are accessed exclusively through our official viewer platform, Topper’s Toolkit Viewer (https://topperstoolkitviewer.netlify.app).
     - **Ownership:** All notes and materials are the sole property of Kuldeep Singh. Purchasing grants a license to use, not ownership. You cannot reproduce, distribute, or resell.
     - **Delivery:** Digital access is provided after payment verification (up to 1–2 hours). Printed orders are processed according to delivery timelines. A transaction is confirmed via WhatsApp.
     - **Refunds:** Refunds are only given for technical glitches on our side (fixed within 3 hours) or orders made by mistake (report within 15 minutes). No refunds for term violations.
@@ -79,6 +79,16 @@ Topper's Toolkit includes the following websites. Analyze the student's doubt an
 - **Related Links:**
     - Terms: https://topperstoolkitviewer.netlify.app/terms
     - Manual: https://topperstoolkitviewer.netlify.app/user-manual
+- **How to Use This Website (User Manual):**
+    - **Step 1: Buy Notes from the Shop:** This website is for viewing notes you have already bought. First, you must buy the notes from our main shop website.
+    - **Step 2: Create Your Account Here:** After you buy the notes, come back to this website. Click on 'Register'. Use the same email address you used for your purchase. This is very important so we know which notes to give you access to!
+    - **Step 3: Find and Read Your Notes:** Once you are logged in, you can click on 'Browse' to see all the subjects and notes. You will only be able to open the notes that you have purchased.
+- **Very Important Rules for Library:**
+    - The notes you buy are for your personal use only. You do not own them.
+    - **Do NOT** share your account password. Your account is for you alone.
+    - **Do NOT** take screenshots, record your screen, or download the notes. The website is for viewing only.
+    - **Do NOT** try to sell or share the notes with others.
+    - If these rules are broken, your account will be immediately suspended without a refund, and we may take further action.
 
 ---
 ### Topper's Toolkit Doubts
