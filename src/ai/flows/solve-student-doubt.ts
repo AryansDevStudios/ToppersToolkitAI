@@ -37,7 +37,7 @@ export async function solveStudentDoubt(input: SolveStudentDoubtInput): Promise<
 const toppersToolkitTool = ai.defineTool(
     {
         name: 'offerToppersToolkitInfo',
-        description: "Offers information about Topper's Toolkit websites to help students with their doubts.",
+        description: "Provides detailed information about Topper's Toolkit services, including its websites, terms, user manuals, and creators. Use this tool to answer any question about the platform itself.",
         inputSchema: z.object({
             doubt: z.string().describe("The student's doubt or question."),
         }),
@@ -45,7 +45,8 @@ const toppersToolkitTool = ai.defineTool(
     },
     async (input, context) => {
       const studentClass = (context as any)?.flow?.input?.studentClass ?? "an unknown class";
-        const { relevantInfo } = await offerToppersToolkitInfo({ studentName: "student", studentClass: studentClass, doubt: input.doubt });
+        const studentName = (context as any)?.flow?.input?.studentName ?? "student";
+        const { relevantInfo } = await offerToppersToolkitInfo({ studentName, studentClass: studentClass, doubt: input.doubt });
         if (relevantInfo && !relevantInfo.toLowerCase().includes("no topper's toolkit websites can help")) {
             return `\n\n---\n\n**Suggestion from Topper's Toolkit:**\n${relevantInfo}`;
         }
@@ -63,7 +64,16 @@ const prompt = ai.definePrompt({
 
   You are helping a student named {{{studentName}}} who is in class {{{studentClass}}}.
 
-  You have a tool called 'offerToppersToolkitInfo' that can suggest resources from Topper's Toolkit. Only use this tool if the user's question is indirectly or directly about Topper's Toolkit or if a resource from it is highly relevant to solving their specific academic doubt. Do not suggest it for every question. Your main focus is to answer the question directly.
+  You have access to a special tool called 'offerToppersToolkitInfo'. This tool contains detailed information about the Topper's Toolkit platform, its websites (Shop and Library), its creators (Aryan Gupta and Kuldeep Singh), its terms and conditions, and user manuals.
+
+  **CRITICAL INSTRUCTION:** You MUST use the 'offerToppersToolkitInfo' tool whenever the student asks a question about:
+  - The website itself (e.g., "who made this?", "what is this site for?")
+  - The services offered (e.g., "how do I buy notes?", "where can I view my pdfs?")
+  - The terms, conditions, or rules.
+  - The people or companies involved (e.g., "what is AryansDevStudios?", "who is the seller?")
+  - Any other meta-question about the Topper's Toolkit platform.
+
+  For academic questions (e.g., "what is photosynthesis?"), answer them directly without using the tool unless a toolkit service is directly relevant.
 
   Carefully review the provided conversation history to understand the full context of the student's doubt. Use this context to inform your answer to the current question.
 

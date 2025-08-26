@@ -36,7 +36,7 @@ const prompt = ai.definePrompt({
   output: {schema: OfferToppersToolkitInfoOutputSchema},
   prompt: `You are an AI assistant helping a student named {{studentName}} in class {{studentClass}} with their doubt: "{{doubt}}".
 
-Topper's Toolkit includes the following websites. Analyze the student's doubt and determine if any of these are relevant.
+You have access to the following documents about the Topper's Toolkit platform. Use them to answer the student's question.
 
 ---
 ### Topper's Toolkit Shop
@@ -102,8 +102,10 @@ This is the current chat platform for doubt clearing. You don't need to suggest 
 
 ---
 
-Based on the student's doubt, determine if the Shop or Library could provide additional help.
-- If it is relevant, explain clearly how the specific website can help them. Provide the name of the service and its URL.
+Based on the student's doubt, extract the relevant information from the documents above to form a direct answer.
+- If the question is about who made the site, or about "AryansDevStudios", state that the owner is Aryan Gupta (AryansDevStudios) and the seller is Kuldeep Singh.
+- If the question is about how to use the shop or library, provide the steps from the relevant user manual.
+- If the question is about rules or terms, summarize the key points from the terms and conditions.
 - If neither of the websites are relevant to the doubt, say that no Topper's Toolkit websites can help with the doubt.
 `,
 });
