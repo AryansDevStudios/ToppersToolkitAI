@@ -194,33 +194,35 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                       </div>
                    ) : (
                     <div className={cn('flex flex-col gap-1 w-full max-w-[90%] md:max-w-2xl', message.role === 'user' ? 'items-end' : 'items-start')}>
-                      <div
-                        className={cn(
-                          'prose prose-sm dark:prose-invert rounded-2xl p-3 px-4 shadow-sm',
-                          'prose-p:text-sm prose-p:md:text-base',
-                          message.role === 'user'
-                            ? 'bg-gradient-to-br from-primary to-violet-500 text-primary-foreground rounded-br-lg prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-a:text-amber-300 hover:prose-a:text-amber-400 prose-code:text-primary-foreground'
-                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-bl-lg border border-gray-200 dark:border-gray-700'
-                        )}
-                      >
-                         <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                      <div className={cn("flex w-fit max-w-full flex-col gap-1", message.role === 'user' ? 'items-end' : 'items-start')}>
+                        <div
+                          className={cn(
+                            'prose prose-sm dark:prose-invert rounded-2xl p-3 px-4 shadow-sm',
+                            'prose-p:text-sm prose-p:md:text-base',
+                            message.role === 'user'
+                              ? 'bg-gradient-to-br from-primary to-violet-500 text-primary-foreground rounded-br-lg prose-p:text-primary-foreground prose-strong:text-primary-foreground prose-a:text-amber-300 hover:prose-a:text-amber-400 prose-code:text-primary-foreground'
+                              : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-bl-lg border border-gray-200 dark:border-gray-700'
+                          )}
+                        >
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                        </div>
+                         <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-7 w-auto px-2 transition-opacity text-muted-foreground hover:text-foreground"
+                              onClick={() => handleCopy(message.content, message.id || `${index}`)}
+                            >
+                              {copiedMessageId === (message.id || `${index}`) ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                              <span className="sr-only">Copy message</span>
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {copiedMessageId === (message.id || `${index}`) ? 'Copied!' : 'Copy'}
+                          </TooltipContent>
+                        </Tooltip>
                       </div>
-                       <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-7 w-auto px-2 transition-opacity text-muted-foreground hover:text-foreground"
-                            onClick={() => handleCopy(message.content, message.id || `${index}`)}
-                          >
-                            {copiedMessageId === (message.id || `${index}`) ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
-                            <span className="sr-only">Copy message</span>
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          {copiedMessageId === (message.id || `${index}`) ? 'Copied!' : 'Copy'}
-                        </TooltipContent>
-                      </Tooltip>
                     </div>
                    )}
                   {message.role === 'user' && (
