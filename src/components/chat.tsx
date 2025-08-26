@@ -177,12 +177,12 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                 <div
                   key={message.id || index}
                   className={cn(
-                    'flex items-start gap-2 md:gap-3',
+                    'flex w-full items-start gap-2 md:gap-3',
                      message.role === 'system' ? 'justify-center' : message.role === 'user' ? 'justify-end' : 'justify-start'
                   )}
                 >
                   {message.role === 'assistant' && (
-                    <Avatar className="h-8 w-8 md:h-9 md:w-9 self-start shadow-md">
+                    <Avatar className="h-8 w-8 md:h-9 md:w-9 self-start shadow-md shrink-0">
                       <AvatarFallback className="bg-gradient-to-br from-primary to-violet-500 text-white">
                         <Bot className="h-4 w-4 md:h-5 md:w-5" />
                       </AvatarFallback>
@@ -193,7 +193,7 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                         {message.content}
                       </div>
                    ) : (
-                    <div className={cn('flex flex-col gap-1 w-full max-w-[90%] md:max-w-2xl', message.role === 'user' ? 'items-end' : 'items-start')}>
+                    <div className={cn('flex flex-col gap-1 w-full max-w-[90%] md:max-w-[75%]', message.role === 'user' ? 'items-end' : 'items-start')}>
                       <div className={cn("flex w-fit max-w-full flex-col gap-1", message.role === 'user' ? 'items-end' : 'items-start')}>
                         <div
                           className={cn(
@@ -226,7 +226,7 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                     </div>
                    )}
                   {message.role === 'user' && (
-                    <Avatar className="h-8 w-8 md:h-9 md:w-9 self-start shadow-md">
+                    <Avatar className="h-8 w-8 md:h-9 md:w-9 self-start shadow-md shrink-0">
                       <AvatarFallback className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold">
                         {getInitials(studentName)}
                       </AvatarFallback>
