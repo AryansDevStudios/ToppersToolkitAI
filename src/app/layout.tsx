@@ -12,12 +12,13 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
   params,
+  searchParams,
 }: Readonly<{
   children: React.ReactNode;
-  params: { theme?: string };
+  params: {};
+  searchParams: { [key: string]: string | string[] | undefined };
 }>) {
-  const searchParams = new URLSearchParams();
-  const theme = searchParams.get('theme') || 'light';
+  const theme = searchParams?.theme || 'light';
 
   return (
     <html lang="en" className={cn(theme)} suppressHydrationWarning>

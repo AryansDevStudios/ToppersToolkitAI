@@ -5,10 +5,10 @@ import { Suspense } from 'react';
 function ChatPage({
   searchParams,
 }: {
-  searchParams: { name?: string; class?: string; theme?: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const studentName = searchParams.name;
-  const studentClass = searchParams.class;
+  const studentName = searchParams.name as string;
+  const studentClass = searchParams.class as string;
 
   if (!studentName || !studentClass) {
     return (
@@ -40,7 +40,7 @@ function ChatPage({
 export default function Home({
   searchParams,
 }: {
-  searchParams: { name?: string; class?: string; theme?: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
   return (
     <Suspense fallback={<div className="h-screen w-full" />}>
