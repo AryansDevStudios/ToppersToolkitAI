@@ -147,6 +147,37 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
     }
   };
 
+  const ChatSkeletons = () => (
+    <div className="space-y-6">
+        <div className="flex items-start gap-3 justify-start">
+            <Skeleton className="h-9 w-9 rounded-full shrink-0" />
+            <div className="flex flex-col gap-2 w-full max-w-[75%]">
+                <Skeleton className="h-7 w-48 rounded-2xl" />
+                <Skeleton className="h-7 w-32 rounded-2xl" />
+            </div>
+        </div>
+        <div className="flex items-start gap-3 justify-end">
+             <div className="flex flex-col gap-2 w-full max-w-[75%] items-end">
+                <Skeleton className="h-7 w-40 rounded-2xl" />
+            </div>
+            <Skeleton className="h-9 w-9 rounded-full shrink-0" />
+        </div>
+        <div className="flex items-start gap-3 justify-start">
+            <Skeleton className="h-9 w-9 rounded-full shrink-0" />
+            <div className="flex flex-col gap-2 w-full max-w-[75%]">
+                <Skeleton className="h-7 w-56 rounded-2xl" />
+            </div>
+        </div>
+         <div className="flex items-start gap-3 justify-end">
+             <div className="flex flex-col gap-2 w-full max-w-[75%] items-end">
+                <Skeleton className="h-7 w-32 rounded-2xl" />
+                <Skeleton className="h-7 w-24 rounded-2xl" />
+            </div>
+            <Skeleton className="h-9 w-9 rounded-full shrink-0" />
+        </div>
+    </div>
+  );
+
   return (
     <TooltipProvider>
     <div className="flex h-screen w-full flex-col bg-gradient-to-br from-indigo-50 via-white to-violet-50 dark:from-gray-900 dark:via-gray-900/95 dark:to-violet-900/20">
@@ -154,12 +185,7 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
         <ScrollArea className="h-full custom-scrollbar" ref={scrollAreaRef}>
           <div className="p-4 md:p-6 space-y-6">
             {isHistoryLoading ? (
-              <div className="flex justify-center items-center py-4">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Loading history...</span>
-                </div>
-              </div>
+              <ChatSkeletons />
             ) : messages.length === 0 ? (
                 <div className="flex h-[calc(100vh-140px)] flex-col items-center justify-center gap-4 text-center p-4">
                     <div className="p-3 bg-primary/10 rounded-full border-4 border-primary/20">
@@ -299,5 +325,3 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
     </TooltipProvider>
   );
 }
-
-    
