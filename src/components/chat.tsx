@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useRef, FormEvent } from 'react';
-import { Bot, Send, User, BrainCircuit, Paintbrush, Copy, Check } from 'lucide-react';
+import { Bot, Send, User, BrainCircuit, Paintbrush, Copy, Check, Loader2 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -29,17 +29,18 @@ const getInitials = (name: string) => {
 export function Chat({ studentName, studentClass }: { studentName: string, studentClass: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(true);
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     async function loadHistory() {
-      setIsLoading(true);
+      setIsHistoryLoading(true);
       const history = await getChatHistory(studentName);
       setMessages(history);
-      setIsLoading(false);
+      setIsHistoryLoading(false);
     }
     loadHistory();
   }, [studentName]);
@@ -152,13 +153,14 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
       <main className="flex-1 overflow-hidden">
         <ScrollArea className="h-full custom-scrollbar" ref={scrollAreaRef}>
           <div className="p-4 md:p-6 space-y-6">
-            {isLoading && messages.length === 0 ? (
-              <div className="space-y-4 p-4">
-                <Skeleton className="h-20 w-3/4 rounded-2xl bg-gray-200 dark:bg-gray-800" />
-                <Skeleton className="h-20 w-3/4 rounded-2xl ml-auto bg-gray-200 dark:bg-gray-800" />
-                <Skeleton className="h-20 w-2/3 rounded-2xl bg-gray-200 dark:bg-gray-800" />
+            {isHistoryLoading ? (
+              <div className="flex justify-center items-center py-4">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Loading history...</span>
+                </div>
               </div>
-            ) : !isLoading && messages.length === 0 ? (
+            ) : messages.length === 0 ? (
                 <div className="flex h-[calc(100vh-140px)] flex-col items-center justify-center gap-4 text-center p-4">
                     <div className="p-3 bg-primary/10 rounded-full border-4 border-primary/20">
                         <BrainCircuit className="h-8 w-8 md:h-10 md:w-10 text-primary" />
@@ -235,7 +237,7 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                 </div>
               ))
             )}
-            {isLoading && messages.length > 0 && (
+            {isLoading && (
               <div className="flex items-start gap-3 justify-start">
                 <Avatar className="h-8 w-8 md:h-9 md:w-9 shadow-md">
                    <AvatarFallback className="bg-gradient-to-br from-primary to-violet-500 text-white">
@@ -275,12 +277,12 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                     handleSubmit(e as any);
                   }
                 }}
-                disabled={isLoading}
+                disabled={isLoading || isHistoryLoading}
               />
               <Button
                 type="submit"
                 size="icon"
-                disabled={isLoading || !input.trim()}
+                disabled={isLoading || isHistoryLoading || !input.trim()}
                 className="absolute right-2 bottom-[7px] md:right-3 md:bottom-3 w-9 h-9 md:w-10 md:h-10 rounded-full bg-primary hover:bg-primary/90 transition-all duration-300 transform hover:scale-110 active:scale-100 flex items-center justify-center"
               >
                 <Send className="h-4 w-4 md:h-5 md:w-5" />
@@ -297,3 +299,5 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
     </TooltipProvider>
   );
 }
+
+    
