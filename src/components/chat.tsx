@@ -44,6 +44,30 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
     }
     loadHistory();
   }, [studentName]);
+  
+  useEffect(() => {
+    const chatInput = inputRef.current;
+
+    const handleFocus = () => {
+      window.parent.postMessage('inputFocused', '*');
+    };
+
+    const handleBlur = () => {
+      window.parent.postMessage('inputBlurred', '*');
+    };
+
+    if (chatInput) {
+      chatInput.addEventListener('focus', handleFocus);
+      chatInput.addEventListener('blur', handleBlur);
+    }
+
+    return () => {
+      if (chatInput) {
+        chatInput.removeEventListener('focus', handleFocus);
+        chatInput.removeEventListener('blur', handleBlur);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -295,7 +319,7 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your doubt here..."
-                className="w-full pl-3 pr-16 py-2.5 md:pl-4 md:pr-20 md:py-3 text-sm md:text-base bg-gray-100 dark:bg-gray-800 border-2 border-transparent focus:border-primary rounded-xl md:rounded-2xl resize-none transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:text-gray-100 max-h-48 custom-scrollbar"
+                className="w-full pl-3 pr-16 py-2.5 md:pl-4 md:pr-20 md:py-3 text-sm md:text-base bg-gray-100 dark:bg-gray-800 border-2 border-transparent focus:border-primary rounded-xl md:rounded-2xl resize-none transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-background dark:text-gray-100 max-h-48 custom-scrollbar"
                 rows={1}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
