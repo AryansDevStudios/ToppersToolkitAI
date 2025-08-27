@@ -245,8 +245,8 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                         {message.content}
                       </div>
                    ) : (
-                    <div className={cn('flex flex-col gap-1 w-full max-w-[90%] md:max-w-[75%]', message.role === 'user' ? 'items-end' : 'items-start')}>
-                      <div className={cn("flex w-fit max-w-full flex-col gap-1", message.role === 'user' ? 'items-end' : 'items-start')}>
+                    <div className={cn('flex flex-col gap-1 w-full max-w-full', message.role === 'user' ? 'items-end' : 'items-start')}>
+                      <div className={cn("flex w-fit max-w-[90%] md:max-w-[75%] flex-col gap-1", message.role === 'user' ? 'items-end' : 'items-start')}>
                         <div
                           className={cn(
                             'prose prose-sm dark:prose-invert rounded-2xl p-3 px-4 shadow-sm break-words',
@@ -319,7 +319,7 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your doubt here..."
-                className="w-full pl-3 pr-16 py-2.5 md:pl-4 md:pr-20 md:py-3 text-sm md:text-base bg-gray-100 dark:bg-gray-800 border-2 border-transparent focus:border-primary rounded-xl md:rounded-2xl resize-none transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-background dark:text-gray-100 max-h-48 custom-scrollbar"
+                className="w-full pl-3 pr-16 py-5 md:pl-4 md:pr-20 md:py-5 text-sm md:text-base bg-gray-100 dark:bg-gray-800 border-2 border-transparent focus:border-primary rounded-xl md:rounded-2xl resize-none transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-background dark:text-gray-100 max-h-48 custom-scrollbar"
                 rows={1}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
