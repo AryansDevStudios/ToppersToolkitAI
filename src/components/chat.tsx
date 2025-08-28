@@ -26,7 +26,7 @@ const getInitials = (name: string) => {
 };
 
 
-export function Chat({ studentName, studentClass }: { studentName: string, studentClass: string }) {
+export function Chat({ studentName, studentClass, gender }: { studentName: string, studentClass: string, gender?: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -148,6 +148,7 @@ export function Chat({ studentName, studentClass }: { studentName: string, stude
       const aiResponseContent = await getAiResponse(
         studentName,
         studentClass,
+        gender,
         updatedMessages
       );
       const aiMessage: Message = {

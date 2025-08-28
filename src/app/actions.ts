@@ -35,6 +35,7 @@ function formatHistory(messages: Message[]): string {
 export async function getAiResponse(
   studentName: string,
   studentClass: string,
+  gender: string | undefined,
   currentMessages: Message[]
 ): Promise<string> {
   const lastUserMessage = currentMessages[currentMessages.length - 1];
@@ -52,6 +53,7 @@ export async function getAiResponse(
     const mainAnswerResponse = await solveStudentDoubt({
         studentName,
         studentClass,
+        gender,
         question: lastUserMessage.content,
         conversationHistory: conversationHistoryText
     });

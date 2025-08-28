@@ -9,8 +9,12 @@ function ChatPage() {
   const searchParams = useSearchParams();
   const studentName = searchParams.get('name');
   const studentClass = searchParams.get('class');
+  const gender = searchParams.get('gender');
 
-  if (!studentName || !studentClass) {
+  const isTeacher = studentClass?.toLowerCase() === 'teacher';
+  const isInfoMissing = !studentName || !studentClass || (isTeacher && !gender);
+
+  if (isInfoMissing) {
     return (
       <main className="flex h-screen w-full items-center justify-center bg-background p-4">
         <div className="flex flex-col items-center gap-4 text-center p-8 border-2 border-dashed rounded-2xl bg-card">
@@ -32,7 +36,7 @@ function ChatPage() {
 
   return (
     <main className="h-screen bg-background">
-      <Chat studentName={studentName} studentClass={studentClass} />
+      <Chat studentName={studentName} studentClass={studentClass} gender={gender || undefined} />
     </main>
   );
 }
