@@ -12,6 +12,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import { offerToppersToolkitInfo } from './offer-toppers-toolkit-info';
+import { getTeacherWelcomeMessage as getTeacherWelcomeMessageFlow } from './get-teacher-info';
 
 const SolveStudentDoubtInputSchema = z.object({
   studentName: z
@@ -34,6 +35,22 @@ export type SolveStudentDoubtOutput = z.infer<typeof SolveStudentDoubtOutputSche
 export async function solveStudentDoubt(input: SolveStudentDoubtInput): Promise<SolveStudentDoubtOutput> {
   return solveStudentDoubtFlow(input);
 }
+
+const getTeacherWelcomeMessage = ai.defineTool(
+    {
+        name: 'getTeacherWelcomeMessage',
+        description: "Checks if a user is a recognized teacher, principal, or director and returns a special welcome message. Only call this tool if the user's role is 'Teacher'.",
+        inputSchema: z.object({
+            teacherName: z.string().describe("The full name of the teacher to check."),
+            gender: z.string().describe("The teacher's gender ('male' or 'female')."),
+        }),
+        outputSchema: z.string().describe("A special welcome message if the teacher is recognized, otherwise 'No special message'."),
+    },
+    async (input) => {
+        const result = await getTeacherWelcomeMessageFlow(input);
+        return result.welcomeMessage;
+    }
+);
 
 const toppersToolkitTool = ai.defineTool(
     {
@@ -68,31 +85,17 @@ You are helping a user with the following details:
 - Role: {{{studentClass}}}
 {{#if gender}}- Gender: {{{gender}}}{{/if}}
 
-You have access to one special tool:
+You have access to two special tools:
 1.  'offerToppersToolkitInfo': This tool contains detailed information about the Topper's Toolkit platform, its websites (Shop and Library), its creators (Aryan Gupta and Kuldeep Singh), its terms and conditions, and user manuals.
-
-**SPECIAL RECOGNITIONS:**
-This is a very important instruction. We have a list of special individuals at the school. If the user's name ({{{studentName}}}) perfectly matches one of the names below, you MUST begin your response with the corresponding special message. After delivering the special message, you should then continue to answer their question as you normally would for a teacher.
-
-- **Principal's Name:** "[Principal's Full Name]"
-  - **Special Message:** "It is an absolute honor to welcome our esteemed Principal, [Principal's Full Name]! Your leadership and vision are the bedrock of our school's success. I am ready to assist you with anything you need. How can I help you today, Ma'am/Sir?"
-
-- **Director's Name:** "[Director's Full Name]"
-  - **Special Message:** "A very warm welcome to our respected Director, [Director's Full Name]! Your guidance inspires us all to strive for excellence. It's a privilege to have you here. How may I be of service, Sir/Ma'am?"
-
-- **Teacher Names:**
-  - "[Teacher 1 Full Name]"
-  - "[Teacher 2 Full Name]"
-  - "[Teacher 3 Full Name]"
-  - **Special Message for any matched teacher:** "Welcome, [Teacher's Name]! It's wonderful to see one of our school's amazing educators here. Thank you for your dedication to teaching. I'm here and ready to help you with your query."
+2.  'getTeacherWelcomeMessage': This tool checks if a user is a specially recognized teacher, principal, or director and provides a unique welcome message for them.
 
 **CRITICAL INSTRUCTIONS:**
 
-1.  **If the user's role is 'Teacher' (and their name is NOT on the special list):**
-    *   Adopt a respectful and collaborative tone suitable for a fellow educator.
-    *   Address them as "Sir" if their gender is 'male' and "Ma'am" if their gender is 'female'. Do NOT use their name unless they ask you to.
-    *   Your primary goal is to assist them with their professional needs, such as finding creative ways to explain complex topics, generating quiz questions, or outlining lesson plans.
-    *   Answer their questions comprehensively, assuming a high level of background knowledge.
+1.  **If the user's role is 'Teacher':**
+    *   **FIRST,** you MUST use the \`getTeacherWelcomeMessage\` tool. Pass the teacher's full name and gender to it.
+    *   If the tool returns a special message (i.e., not "No special message"), you MUST begin your entire response with that exact message. After the special message, answer their question.
+    *   If the tool returns "No special message," then adopt a respectful, collaborative tone. Address them as "Sir" if their gender is 'male' and "Ma'am" if their gender is 'female'. Do NOT use their name unless they ask you to.
+    *   Your primary goal is to assist them with their professional needs, such as finding creative ways to explain complex topics, generating quiz questions, or outlining lesson plans. Answer their questions comprehensively, assuming a high level of background knowledge.
 
 2.  **If the user's role is a student (e.g., "9", "10", "11", "12"):**
     *   For **academic questions** (e.g., "what is photosynthesis?"), answer using your general knowledge, but align your explanations with the **NCERT syllabus** for the student's class level. **Do not** state "According to NCERT..." or reference the textbook directly. Simply provide the answer as an expert tutor would.
@@ -118,7 +121,7 @@ Current Question: {{{question}}}
 
 Now, formulate a natural and helpful answer.`,
   model: 'googleai/gemini-2.5-flash',
-  tools: [toppersToolkitTool],
+  tools: [toppersToolkitTool, getTeacherWelcomeMessage],
   config: {
     temperature: 0.7
   }
