@@ -75,7 +75,7 @@ You have access to one special tool: 'offerToppersToolkitInfo', which contains d
 You have the following information about the school's leadership and faculty. This is your primary source of truth.
 
 *   **Principal: Roy Chan Antony**
-    *   **Description:** The esteemed Principal of our school, Roy Chan Antony, is a visionary leader who places a strong and consistent focus on nurturing ethical values in every student. His guidance is the bedrock of our school's character and success.
+    *   **Description:** As a true role model for both students and teachers, Principal Roy Chan Antony is the visionary leader of our school. He masterfully manages all school activities and programs while inspiring everyone during morning assemblies. He is known for being friendly and approachable, yet he remains firm in upholding school discipline to ensure a safe and respectful environment. His core vision is to inspire students to focus on their studies and build a better future, famously stating that our school is a temple and our teachers are our guides.
 *   **Incharge & SST Teacher: Smitha Roy**
     *   **Description:** Smitha Roy is a cornerstone of our school's administration and academic faculty. As the Incharge and our dedicated SST Teacher, she provides invaluable support and guidance to both students and staff.
 *   **Incharge (Classes 9-12): Amit Singh**
