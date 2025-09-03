@@ -176,8 +176,7 @@ export async function hasChatHistory(studentName: string): Promise<boolean> {
 export async function clearUserChatSession(studentName: string): Promise<{success: boolean, error?: string}> {
     try {
         const messagesCol = collection(db, 'chats', studentName, 'messages');
-        const q = query(messagesCol, where('render', '!=', false));
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDocs(messagesCol);
 
         if (querySnapshot.empty) {
             return { success: true };
