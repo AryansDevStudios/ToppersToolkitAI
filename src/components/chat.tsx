@@ -145,7 +145,7 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
 
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
-    setInput('');
+setInput('');
     setIsLoading(true);
 
     try {
