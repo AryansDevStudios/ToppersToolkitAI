@@ -1,11 +1,10 @@
-// @ts-nocheck
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Bot, BrainCircuit, Loader2 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { getAiResponse, getChatHistory, type Message, clearUserChatSession } from '@/app/actions';
+import { getAiResponse, getChatHistory, type Message, clearUserChatSession, hasChatHistory } from '@/app/actions';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
 // KaTeX imports
