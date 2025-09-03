@@ -1,3 +1,4 @@
+
 // @ts-nocheck
 'use client';
 
@@ -525,7 +526,7 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
               </div>
             </form>
             <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
-              A product of Topper's Toolkit, under AryansDevStudios
+              A product of Topper's Toolkit by AryansDevStudios
             </p>
           </div>
         </footer>
