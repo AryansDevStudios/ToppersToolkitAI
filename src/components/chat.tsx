@@ -31,78 +31,93 @@ const getInitials = (name: string) => {
 
 // This is the new, robust renderer that handles Markdown formatting and LaTeX.
 const renderers = {
-    p: ({ children }) => {
-      const childrenArray = React.Children.toArray(children);
-      const newChildren = childrenArray.flatMap((child, index) => {
-        if (typeof child === 'string') {
-          const parts = child.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+\$)/g);
-          return parts.map((part, i) => {
-            if (part.startsWith('$$') && part.endsWith('$$')) {
-              return <BlockMath key={`${index}-${i}`} math={part.slice(2, -2)} />;
-            }
-            if (part.startsWith('$') && part.endsWith('$')) {
-              return <InlineMath key={`${index}-${i}`} math={part.slice(1, -1)} />;
-            }
-            return part;
-          });
-        }
-        if (child.props && child.props.node && child.props.node.type === 'element') {
-             const elementChildren = React.Children.toArray(child.props.children);
-             const processedChildren = elementChildren.flatMap((elementChild, j) => {
-                if (typeof elementChild === 'string') {
-                    const parts = elementChild.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+\$)/g);
-                     return parts.map((part, k) => {
-                        if (part.startsWith('$$') && part.endsWith('$$')) {
-                            return <BlockMath key={`${index}-${j}-${k}`} math={part.slice(2, -2)} />;
-                        }
-                        if (part.startsWith('$') && part.endsWith('$')) {
-                            return <InlineMath key={`${index}-${j}-${k}`} math={part.slice(1, -1)} />;
-                        }
-                        return part;
-                    });
-                }
-                return elementChild;
-             });
-             return React.cloneElement(child, { ...child.props, children: processedChildren });
-        }
-        return child;
-      });
-
-      // This logic prevents rendering a <p> if it only contains a BlockMath component,
-      // which would result in invalid HTML (<div> inside <p>).
-      const containsBlockMathOnly = newChildren.length === 1 && newChildren[0].type === BlockMath;
-      if (containsBlockMathOnly) {
-          return newChildren[0];
+  p: ({ children }) => {
+    const childrenArray = React.Children.toArray(children);
+  
+    const processed = childrenArray.flatMap((child, index) => {
+      if (typeof child === 'string') {
+        const parts = child.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+\$)/g);
+        return parts.map((part, i) => {
+          if (part.startsWith('$$') && part.endsWith('$$')) {
+            return <BlockMath key={`${index}-${i}`} math={part.slice(2, -2)} />;
+          }
+          if (part.startsWith('$') && part.endsWith('$')) {
+            return <InlineMath key={`${index}-${i}`} math={part.slice(1, -1)} />;
+          }
+          return <span key={`${index}-${i}`}>{part}</span>;
+        });
       }
+  
+      // Return child as-is
+      return child;
+    });
+  
+    // Detect any block-level elements properly
+    const hasBlock = processed.some(
+      (c) =>
+        React.isValidElement(c) &&
+        (c.type === BlockMath || c.type === 'div' || c.type === 'pre')
+    );
+  
+    // Wrap in <p> only if no block exists
+    return hasBlock ? <>{processed}</> : <p className="">{processed}</p>;
+  },  
 
-      return <p className="mb-2">{newChildren}</p>;
-    },
-     a: ({ node, ...props }) => (
-      <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline" />
-    ),
-    h1: ({ node, ...props }) => <h1 {...props} className="text-2xl font-bold my-2" />,
-    h2: ({ node, ...props }) => <h2 {...props} className="text-xl font-bold my-2" />,
-    h3: ({ node, ...props }) => <h3 {...props} className="text-lg font-bold my-2" />,
-    h4: ({ node, ...props }) => <h4 {...props} className="text-md font-semibold my-1" />,
-    h5: ({ node, ...props }) => <h5 {...props} className="text-sm font-semibold my-1" />,
-    h6: ({ node, ...props }) => <h6 {...props} className="text-xs font-semibold my-1" />,
-    blockquote: ({ node, ...props }) => <blockquote {...props} className="border-l-2 pl-4 italic text-gray-600 my-2" />,
-    ul: ({ node, ...props }) => <ul {...props} className="list-disc ml-6 my-2" />,
-    ol: ({ node, ...props }) => <ol {...props} className="list-decimal ml-6 my-2" />,
-    strong: ({ node, ...props }) => <strong {...props} className="font-semibold" />,
-    em: ({ node, ...props }) => <em {...props} className="italic" />,
-    code: ({ node, inline, className, children, ...props }) => {
-        const match = /language-(\w+)/.exec(className || '');
-        return !inline && match ? (
-        <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-x-auto" {...props}>
-            <code>{String(children)}</code>
-        </pre>
-        ) : (
-        <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded" {...props}>
-            {children}
-        </code>
-        );
-    },
+  a: ({ node, ...props }) => (
+    <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline" />
+  ),
+  h1: ({ node, ...props }) => <h1 {...props} className="text-2xl font-bold my-2" />,
+  h2: ({ node, ...props }) => <h2 {...props} className="text-xl font-bold my-2" />,
+  h3: ({ node, ...props }) => <h3 {...props} className="text-lg font-bold my-2" />,
+  h4: ({ node, ...props }) => <h4 {...props} className="text-md font-semibold my-1" />,
+  h5: ({ node, ...props }) => <h5 {...props} className="text-sm font-semibold my-1" />,
+  h6: ({ node, ...props }) => <h6 {...props} className="text-xs font-semibold my-1" />,
+  blockquote: ({ node, ...props }) => <blockquote {...props} className="border-l-2 pl-4 italic text-gray-600 my-2" />,
+  ul: ({ node, ...props }) => <ul {...props} className="list-disc ml-6 my-2" />,
+  ol: ({ node, ...props }) => <ol {...props} className="list-decimal ml-6 my-2" />,
+  strong: ({ node, ...props }) => <strong {...props} className="font-semibold" />,
+  em: ({ node, ...props }) => <em {...props} className="italic" />,
+  code: ({ node, inline, className, children, ...props }) => {
+    const match = /language-(\w+)/.exec(className || '');
+    const codeContent = String(children);
+    const [copied, setCopied] = React.useState(false);
+  
+    if (!inline && match) {
+      const language = match[1];
+  
+      const handleCopy = () => {
+        navigator.clipboard.writeText(codeContent);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      };
+  
+      return (
+        <div className="relative my-2">
+          <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto text-sm md:text-base">
+            <code className={`language-${language}`}>{codeContent}</code>
+          </pre>
+          <button
+            onClick={handleCopy}
+            className={`absolute top-2 right-2 px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200 flex items-center gap-1`}
+          >
+            {copied ? (
+              <Check className="h-5 w-5 text-green-500" />
+            ) : (
+              'Copy'
+            )}
+          </button>
+        </div>
+      );
+    }
+  
+    // Inline code
+    return (
+      <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm md:text-base" {...props}>
+        {children}
+      </code>
+    );
+  }  
+
 };
 
 
@@ -186,7 +201,7 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
     const katexElements = tempDiv.querySelectorAll('.katex-mathml');
     katexElements.forEach(el => el.remove());
     const cleanContent = tempDiv.innerText || content;
-    
+
     navigator.clipboard.writeText(cleanContent).then(() => {
       setCopiedMessageId(id);
       setTimeout(() => {
@@ -194,7 +209,7 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
       }, 2000);
     });
   };
-  
+
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
