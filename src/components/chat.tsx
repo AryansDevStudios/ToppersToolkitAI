@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useRef, FormEvent } from 'react';
 import { Bot, Send, User, BrainCircuit, Copy, Check, Trash2 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { getAiResponse, getChatHistory, clearChatHistory, type Message } from '@/app/actions';
 import { cn } from '@/lib/utils';
