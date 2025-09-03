@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Bot, BrainCircuit, Loader2 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { getAiResponse, getChatHistory, type Message, clearUserChatSession, hasChatHistory } from '@/app/actions';
+import { getAiResponse, getChatHistory, type Message, clearUserChatSession, hasChatHistory, deleteUserChatHistory } from '@/app/actions';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
 // KaTeX imports
@@ -102,13 +102,20 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
     setIsLoading(false);
   };
 
+  const handlePermanentDelete = async () => {
+    setIsLoading(true);
+    await deleteUserChatHistory(studentName);
+    setMessages([]);
+    setInput('');
+    setIsLoading(false);
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
-    if (input.trim().toLowerCase() === '/clear') {
-        handleClearChat();
-        setInput('');
+    if (input.trim().toLowerCase() === '/clearhistory') {
+        handlePermanentDelete();
         return;
     }
 

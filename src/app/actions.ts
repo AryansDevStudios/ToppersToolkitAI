@@ -13,6 +13,7 @@ import {
   Timestamp,
   writeBatch,
   where,
+  deleteDoc,
 } from 'firebase/firestore';
 
 export interface Message {
@@ -191,6 +192,28 @@ export async function clearUserChatSession(studentName: string): Promise<{succes
         return { success: true };
     } catch (error) {
         console.error("Error clearing user chat session:", error);
+        return { success: false, error: (error as Error).message };
+    }
+}
+
+export async function deleteUserChatHistory(studentName: string): Promise<{success: boolean, error?: string}> {
+    try {
+        const messagesCol = collection(db, 'chats', studentName, 'messages');
+        const querySnapshot = await getDocs(messagesCol);
+
+        if (querySnapshot.empty) {
+            return { success: true };
+        }
+
+        const batch = writeBatch(db);
+        querySnapshot.forEach(doc => {
+            batch.delete(doc.ref);
+        });
+
+        await batch.commit();
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting user chat history:", error);
         return { success: false, error: (error as Error).message };
     }
 }
