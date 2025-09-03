@@ -69,26 +69,45 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
     };
   }, []);
 
-  useEffect(() => {
-    // Re-run KaTeX renderer every time messages change
-    if (messages.length > 0) {
-      try {
-        if (window.renderMathInElement) {
-          window.renderMathInElement(document.body, {
-            // ...options...
-            delimiters: [
-              {left: '$$', right: '$$', display: true},
-              {left: '$', right: '$', display: false},
-              {left: '\\(', right: '\\)', display: false},
-              {left: '\\[', right: '\\]', display: true}
-            ]
-          });
-        }
-      } catch (error) {
-        console.error("Error rendering KaTeX:", error);
+  const renderMath = () => {
+    try {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ]
+        });
       }
+    } catch (error) {
+      console.error("Error rendering KaTeX:", error);
     }
-    
+  };
+
+  useEffect(() => {
+    if (messages.length === 0) return;
+
+    let attempts = 0;
+    const intervalId = setInterval(() => {
+      if (window.renderMathInElement) {
+        clearInterval(intervalId);
+        renderMath();
+      } else {
+        attempts++;
+        if (attempts > 10) { // Stop trying after 1 second
+          clearInterval(intervalId);
+          console.error("KaTeX failed to load.");
+        }
+      }
+    }, 100);
+
+    return () => clearInterval(intervalId);
+  }, [messages]);
+
+
+  useEffect(() => {
     if (scrollAreaRef.current) {
       setTimeout(() => {
         const viewport = scrollAreaRef.current?.querySelector('div[data-radix-scroll-area-viewport]');

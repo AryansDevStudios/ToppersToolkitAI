@@ -28,6 +28,9 @@ export default function RootLayout({
         {/* KaTeX CSS */}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0KOVEMQNogPSesLpv7EdxUey/tDb+ESBeCojK/2GmSSvi7szsJgmE" crossOrigin="anonymous" />
         
+        {/* KaTeX JS + auto-render extension */}
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlVwcpaNlchBQDfuIpi9eq4MvAChulmSinGyIsog2ApKdJ8AciioVkGLa4M" crossOrigin="anonymous"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossOrigin="anonymous"></script>
       </head>
       <body className="font-body antialiased">
         <Suspense>
@@ -36,10 +39,6 @@ export default function RootLayout({
             <Toaster />
           </ThemeProvider>
         </Suspense>
-
-        {/* KaTeX JS + auto-render extension */}
-        <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlVwcpaNlchBQDfuIpi9eq4MvAChulmSinGyIsog2ApKdJ8AciioVkGLa4M" crossOrigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossOrigin="anonymous"></script>
       </body>
     </html>
   );
