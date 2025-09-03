@@ -43,33 +43,21 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
 
   useEffect(() => {
     async function checkAndLoadHistory() {
-      if (searchParams.has('archive')) {
-        if (showArchived) {
-          setIsHistoryLoading(true);
-          const history = await getChatHistory(studentName);
-          setMessages(history);
-          setIsHistoryLoading(false);
-        } else {
-          setMessages([]);
-          setIsHistoryLoading(false);
-        }
-        setIsCheckingHistory(false);
-        return;
-      }
-  
+      setIsCheckingHistory(true);
       const historyExists = await hasChatHistory(studentName);
+      
       if (historyExists) {
-        const url = new URL(window.location.href);
-        url.searchParams.set('archive', 'true');
-        window.location.href = url.toString();
+        const history = await getChatHistory(studentName);
+        setMessages(history);
       } else {
-        setIsCheckingHistory(false);
-        setIsHistoryLoading(false);
         setMessages([]);
       }
+      
+      setIsHistoryLoading(false);
+      setIsCheckingHistory(false);
     }
     checkAndLoadHistory();
-  }, [studentName, showArchived, searchParams]);
+  }, [studentName]);
 
   useEffect(() => {
     const chatInput = inputRef.current;
@@ -125,9 +113,9 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
   }, [input]);
 
   const handleClearChat = async () => {
-    const url = new URL(window.location.href);
-    url.searchParams.delete('archive');
-    window.location.href = url.toString();
+    setMessages([]);
+    // We are not deleting from DB, just clearing the session UI.
+    // A full reload can also achieve this if state is not shared across reloads.
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -210,11 +198,11 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
     </div>
   );
 
-  if (isCheckingHistory) {
+  if (isCheckingHistory || isHistoryLoading) {
     return (
         <div className="flex h-screen w-full flex-col items-center justify-center bg-background">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="mt-4 text-muted-foreground">Checking for previous conversations...</p>
+            <p className="mt-4 text-muted-foreground">Loading conversation...</p>
         </div>
     );
   }
@@ -225,9 +213,7 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
         <main className="flex-1 overflow-hidden">
           <ScrollArea className="h-full custom-scrollbar" ref={scrollAreaRef}>
             <div className="p-4 md:p-6 space-y-6">
-              {isHistoryLoading ? (
-                <ChatSkeletons />
-              ) : messages.length === 0 ? (
+              {messages.length === 0 ? (
                 <div className="flex h-[calc(100vh-140px)] flex-col items-center justify-center gap-4 text-center p-4">
                   <div className="p-3 bg-primary/10 rounded-full border-4 border-primary/20">
                     <BrainCircuit className="h-8 w-8 md:h-10 md:w-10 text-primary" />
