@@ -349,7 +349,7 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
                         {message.content}
                       </div>
                     ) : (
-                      <div className={cn('flex flex-col gap-1 w-full max-w-full', message.role === 'user' ? 'items-end' : 'items-start')}>
+                      <div className={cn('flex flex-col gap-1 w-auto max-w-full', message.role === 'user' ? 'items-end' : 'items-start')}>
                         <div className={cn("flex w-fit max-w-[90%] md:max-w-[75%] flex-col gap-1", message.role === 'user' ? 'items-end' : 'items-start')}>
                           <div
                             className={cn(
