@@ -29,42 +29,82 @@ const getInitials = (name: string) => {
   ).toUpperCase();
 };
 
-const extractRawText = (node: any): string => {
-    if (!node) return '';
-    if (node.type === 'text') {
-      return node.value || '';
-    }
-    if (Array.isArray(node.children)) {
-      return node.children.map(child => extractRawText(child)).join('');
-    }
-    return '';
+// This is the new, robust renderer that handles Markdown formatting and LaTeX.
+const renderers = {
+    p: ({ children }) => {
+      const childrenArray = React.Children.toArray(children);
+      const newChildren = childrenArray.flatMap((child, index) => {
+        if (typeof child === 'string') {
+          const parts = child.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+\$)/g);
+          return parts.map((part, i) => {
+            if (part.startsWith('$$') && part.endsWith('$$')) {
+              return <BlockMath key={`${index}-${i}`} math={part.slice(2, -2)} />;
+            }
+            if (part.startsWith('$') && part.endsWith('$')) {
+              return <InlineMath key={`${index}-${i}`} math={part.slice(1, -1)} />;
+            }
+            return part;
+          });
+        }
+        if (child.props && child.props.node && child.props.node.type === 'element') {
+             const elementChildren = React.Children.toArray(child.props.children);
+             const processedChildren = elementChildren.flatMap((elementChild, j) => {
+                if (typeof elementChild === 'string') {
+                    const parts = elementChild.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+\$)/g);
+                     return parts.map((part, k) => {
+                        if (part.startsWith('$$') && part.endsWith('$$')) {
+                            return <BlockMath key={`${index}-${j}-${k}`} math={part.slice(2, -2)} />;
+                        }
+                        if (part.startsWith('$') && part.endsWith('$')) {
+                            return <InlineMath key={`${index}-${j}-${k}`} math={part.slice(1, -1)} />;
+                        }
+                        return part;
+                    });
+                }
+                return elementChild;
+             });
+             return React.cloneElement(child, { ...child.props, children: processedChildren });
+        }
+        return child;
+      });
+
+      // This logic prevents rendering a <p> if it only contains a BlockMath component,
+      // which would result in invalid HTML (<div> inside <p>).
+      const containsBlockMathOnly = newChildren.length === 1 && newChildren[0].type === BlockMath;
+      if (containsBlockMathOnly) {
+          return newChildren[0];
+      }
+
+      return <p className="mb-2">{newChildren}</p>;
+    },
+     a: ({ node, ...props }) => (
+      <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline" />
+    ),
+    h1: ({ node, ...props }) => <h1 {...props} className="text-2xl font-bold my-2" />,
+    h2: ({ node, ...props }) => <h2 {...props} className="text-xl font-bold my-2" />,
+    h3: ({ node, ...props }) => <h3 {...props} className="text-lg font-bold my-2" />,
+    h4: ({ node, ...props }) => <h4 {...props} className="text-md font-semibold my-1" />,
+    h5: ({ node, ...props }) => <h5 {...props} className="text-sm font-semibold my-1" />,
+    h6: ({ node, ...props }) => <h6 {...props} className="text-xs font-semibold my-1" />,
+    blockquote: ({ node, ...props }) => <blockquote {...props} className="border-l-2 pl-4 italic text-gray-600 my-2" />,
+    ul: ({ node, ...props }) => <ul {...props} className="list-disc ml-6 my-2" />,
+    ol: ({ node, ...props }) => <ol {...props} className="list-decimal ml-6 my-2" />,
+    strong: ({ node, ...props }) => <strong {...props} className="font-semibold" />,
+    em: ({ node, ...props }) => <em {...props} className="italic" />,
+    code: ({ node, inline, className, children, ...props }) => {
+        const match = /language-(\w+)/.exec(className || '');
+        return !inline && match ? (
+        <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-x-auto" {...props}>
+            <code>{String(children)}</code>
+        </pre>
+        ) : (
+        <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded" {...props}>
+            {children}
+        </code>
+        );
+    },
 };
 
-// Recursive renderer for nested math
-function renderNodeWithMath(node: any): React.ReactNode {
-  if (!node) return null;
-
-  if (node.type === 'text') {
-    const parts = node.value.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+\$)/g).filter(Boolean);
-    return parts.map((part: string, i: number) => {
-      if (part.startsWith('$$') && part.endsWith('$$')) {
-        return <BlockMath key={i} math={part.slice(2, -2).trim()} />;
-      }
-      if (part.startsWith('$') && part.endsWith('$')) {
-        return <InlineMath key={i} math={part.slice(1, -1).trim()} />;
-      }
-      return <span key={i}>{part}</span>;
-    });
-  }
-
-  if (node.children && node.children.length > 0) {
-    return node.children.map((child: any, i: number) => (
-      <React.Fragment key={i}>{renderNodeWithMath(child)}</React.Fragment>
-    ));
-  }
-
-  return null;
-}
 
 export function Chat({ studentName, studentClass, gender }: { studentName: string, studentClass: string, gender?: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -140,13 +180,21 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
 
   const handleCopy = (content: string, id?: string) => {
     if (!id) return;
-    navigator.clipboard.writeText(content).then(() => {
+    // A quick hack to get clean text for copying, without the react-katex internal markup
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = content;
+    const katexElements = tempDiv.querySelectorAll('.katex-mathml');
+    katexElements.forEach(el => el.remove());
+    const cleanContent = tempDiv.innerText || content;
+    
+    navigator.clipboard.writeText(cleanContent).then(() => {
       setCopiedMessageId(id);
       setTimeout(() => {
         setCopiedMessageId(null);
       }, 2000);
     });
   };
+  
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -297,38 +345,13 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
                                 : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-bl-lg border border-gray-200 dark:border-gray-700'
                             )}
                           >
-                             <ReactMarkdown
+                            <ReactMarkdown
                               remarkPlugins={[remarkGfm]}
-                              components={{
-                                p: ({ node }) => <p>{renderNodeWithMath(node)}</p>,
-                                li: ({ node }) => <li>{renderNodeWithMath(node)}</li>,
-                                // Keep other default renderers intact
-                                a: ({node, ...props}) => <a {...props} />,
-                                h1: ({node, ...props}) => <h1 {...props} />,
-                                h2: ({node, ...props}) => <h2 {...props} />,
-                                h3: ({node, ...props}) => <h3 {...props} />,
-                                h4: ({node, ...props}) => <h4 {...props} />,
-                                h5: ({node, ...props}) => <h5 {...props} />,
-                                h6: ({node, ...props}) => <h6 {...props} />,
-                                blockquote: ({node, ...props}) => <blockquote {...props} />,
-                                ul: ({node, ...props}) => <ul {...props} />,
-                                ol: ({node, ...props}) => <ol {...props} />,
-                                strong: ({node, ...props}) => <strong {...props} />,
-                                em: ({node, ...props}) => <em {...props} />,
-                                code: ({node, inline, className, children, ...props}) => {
-                                  const match = /language-(\w+)/.exec(className || '')
-                                  return !inline && match ? (
-                                    <div {...props}>{String(children)}</div>
-                                  ) : (
-                                    <code className={className} {...props}>
-                                      {children}
-                                    </code>
-                                  )
-                                }
-                              }}
+                              components={renderers}
                             >
                               {message.content}
                             </ReactMarkdown>
+
                           </div>
                           <Tooltip>
                             <TooltipTrigger asChild>
