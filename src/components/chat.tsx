@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, FormEvent } from 'react';
-import { Bot, Send, User, BrainCircuit, Copy, Check } from 'lucide-react';
+import { Bot, Send, User, BrainCircuit, Copy, Check, Trash2 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -12,6 +12,17 @@ import { Skeleton } from './ui/skeleton';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 // KaTeX imports
 import 'katex/dist/katex.min.css';
@@ -33,7 +44,7 @@ const getInitials = (name: string) => {
 const renderers = {
   p: ({ children }) => {
     const childrenArray = React.Children.toArray(children);
-  
+
     const processed = childrenArray.flatMap((child, index) => {
       if (typeof child === 'string') {
         const parts = child.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+\$)/g);
@@ -47,21 +58,21 @@ const renderers = {
           return <span key={`${index}-${i}`}>{part}</span>;
         });
       }
-  
+
       // Return child as-is
       return child;
     });
-  
+
     // Detect any block-level elements properly
     const hasBlock = processed.some(
       (c) =>
         React.isValidElement(c) &&
         (c.type === BlockMath || c.type === 'div' || c.type === 'pre')
     );
-  
+
     // Wrap in <p> only if no block exists
     return hasBlock ? <>{processed}</> : <p className="">{processed}</p>;
-  },  
+  },
 
   a: ({ node, ...props }) => (
     <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline" />
@@ -81,16 +92,16 @@ const renderers = {
     const match = /language-(\w+)/.exec(className || '');
     const codeContent = String(children);
     const [copied, setCopied] = React.useState(false);
-  
+
     if (!inline && match) {
       const language = match[1];
-  
+
       const handleCopy = () => {
         navigator.clipboard.writeText(codeContent);
         setCopied(true);
         setTimeout(() => setCopied(false), 1500);
       };
-  
+
       return (
         <div className="relative my-2">
           <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto text-sm md:text-base">
@@ -109,14 +120,14 @@ const renderers = {
         </div>
       );
     }
-  
+
     // Inline code
     return (
       <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm md:text-base" {...props}>
         {children}
       </code>
     );
-  }  
+  }
 
 };
 
@@ -210,30 +221,34 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
     });
   };
 
+  const handleClearChat = async () => {
+    setIsLoading(true);
+    const result = await clearChatHistory(studentName);
+    if (result.success) {
+      setMessages([{
+        role: 'system',
+        content: 'Your chat history has been cleared.',
+        timestamp: new Date().toISOString(),
+      }]);
+    } else {
+      setMessages(prev => [...prev, {
+        role: 'system',
+        content: 'Sorry, there was an error clearing your history.',
+        timestamp: new Date().toISOString(),
+      }]);
+    }
+    setIsLoading(false);
+  };
+
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
-    if (input.trim() === '{clearHistory}') {
-      setIsLoading(true);
-      const result = await clearChatHistory(studentName);
-      if (result.success) {
-        setMessages([{
-          role: 'system',
-          content: 'Your chat history has been cleared.',
-          timestamp: new Date().toISOString(),
-        }]);
-      } else {
-        setMessages(prev => [...prev, {
-          role: 'system',
-          content: 'Sorry, there was an error clearing your history.',
-          timestamp: new Date().toISOString(),
-        }]);
-      }
-      setInput('');
-      setIsLoading(false);
-      return;
+    if (input.trim().toLowerCase() === '/clear') {
+        handleClearChat();
+        setInput('');
+        return;
     }
 
     const userMessage: Message = {
@@ -333,10 +348,11 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
                   <div
                     key={message.id || index}
                     className={cn(
-                      'flex w-full items-start gap-2 md:gap-3',
+                      'flex items-start gap-2 sm:gap-3', 
                       message.role === 'system' ? 'justify-center' : message.role === 'user' ? 'justify-end' : 'justify-start'
                     )}
                   >
+
                     {message.role === 'assistant' && (
                       <Avatar className="h-8 w-8 md:h-9 md:w-9 self-start shadow-md shrink-0">
                         <AvatarFallback className="bg-gradient-to-br from-primary to-violet-500 text-white">
@@ -349,7 +365,7 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
                         {message.content}
                       </div>
                     ) : (
-                      <div className={cn('flex flex-col gap-1 w-auto max-w-[85%]', message.role === 'user' ? 'items-end' : 'items-start')}>
+                      <div className={cn('flex flex-col gap-1 w-auto max-w-[85%] ', message.role === 'user' ? 'items-end' : 'items-start')}>
                         <div className={cn("flex w-fit max-w-full flex-col gap-1", message.role === 'user' ? 'items-end' : 'items-start')}>
                           <div
                             className={cn(
@@ -423,6 +439,41 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
               onSubmit={handleSubmit}
               className="flex items-end gap-2 md:gap-3"
             >
+               <AlertDialog>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-10 w-10 shrink-0 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                        disabled={isLoading || isHistoryLoading || messages.length === 0}
+                      >
+                        <Trash2 className="h-5 w-5" />
+                        <span className="sr-only">Clear chat history</span>
+                      </Button>
+                    </AlertDialogTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Clear History
+                  </TooltipContent>
+                </Tooltip>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete your current chat history. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleClearChat} className={cn(buttonVariants({variant: 'destructive'}))}>
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
               <div className="flex-1 relative">
                 <textarea
                   ref={inputRef}
