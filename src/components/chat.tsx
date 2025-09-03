@@ -453,15 +453,15 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
                 </Tooltip>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure you want to clear the chat?</AlertDialogTitle>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This will start a new chat session. Your previous messages will be archived and can be viewed by adding '?archive=true' to the URL.
+                      This action cannot be undone. This will permanently delete your chat history and clear the AI's memory of this conversation.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction onClick={handleClearChat} className={cn(buttonVariants({variant: 'destructive'}))}>
-                      Clear Chat
+                      Delete Permanently
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
