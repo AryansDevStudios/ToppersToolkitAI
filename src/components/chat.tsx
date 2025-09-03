@@ -2,20 +2,14 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Bot, User, BrainCircuit, Loader2 } from 'lucide-react';
+import { Bot, BrainCircuit, Loader2 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { getAiResponse, getChatHistory, hasChatHistory, type Message } from '@/app/actions';
-import { cn } from '@/lib/utils';
-import { Skeleton } from './ui/skeleton';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { getAiResponse, getChatHistory, type Message, clearUserChatSession } from '@/app/actions';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 // KaTeX imports
 import 'katex/dist/katex.min.css';
-import { InlineMath, BlockMath } from 'react-katex';
-import { useSearchParams } from 'next/navigation';
 import { ChatFooter } from './chat-footer';
 import { ChatMessage } from './chat-message';
 
@@ -36,28 +30,18 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isHistoryLoading, setIsHistoryLoading] = useState(true);
-  const [isCheckingHistory, setIsCheckingHistory] = useState(true);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const searchParams = useSearchParams();
 
   useEffect(() => {
-    async function checkAndLoadHistory() {
-      setIsCheckingHistory(true);
-      const historyExists = await hasChatHistory(studentName);
-      
-      if (historyExists) {
-        const history = await getChatHistory(studentName);
-        setMessages(history);
-      } else {
-        setMessages([]);
-      }
-      
+    async function loadHistory() {
+      setIsHistoryLoading(true);
+      const history = await getChatHistory(studentName, showArchived);
+      setMessages(history);
       setIsHistoryLoading(false);
-      setIsCheckingHistory(false);
     }
-    checkAndLoadHistory();
-  }, [studentName]);
+    loadHistory();
+  }, [studentName, showArchived]);
 
   useEffect(() => {
     const chatInput = inputRef.current;
@@ -113,9 +97,10 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
   }, [input]);
 
   const handleClearChat = async () => {
+    setIsLoading(true);
+    await clearUserChatSession(studentName);
     setMessages([]);
-    // We are not deleting from DB, just clearing the session UI.
-    // A full reload can also achieve this if state is not shared across reloads.
+    setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -167,38 +152,7 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
     }
   };
 
-  const ChatSkeletons = () => (
-    <div className="space-y-6">
-      <div className="flex items-start gap-3 justify-start">
-        <Skeleton className="h-9 w-9 rounded-full shrink-0" />
-        <div className="flex flex-col gap-2 w-full max-w-[75%]">
-          <Skeleton className="h-7 w-48 rounded-2xl" />
-          <Skeleton className="h-7 w-32 rounded-2xl" />
-        </div>
-      </div>
-      <div className="flex items-start gap-3 justify-end">
-        <div className="flex flex-col gap-2 w-full max-w-[75%] items-end">
-          <Skeleton className="h-7 w-40 rounded-2xl" />
-        </div>
-        <Skeleton className="h-9 w-9 rounded-full shrink-0" />
-      </div>
-      <div className="flex items-start gap-3 justify-start">
-        <Skeleton className="h-9 w-9 rounded-full shrink-0" />
-        <div className="flex flex-col gap-2 w-full max-w-[75%]">
-          <Skeleton className="h-7 w-56 rounded-2xl" />
-        </div>
-      </div>
-      <div className="flex items-start gap-3 justify-end">
-        <div className="flex flex-col gap-2 w-full max-w-[75%] items-end">
-          <Skeleton className="h-7 w-32 rounded-2xl" />
-          <Skeleton className="h-7 w-24 rounded-2xl" />
-        </div>
-        <Skeleton className="h-9 w-9 rounded-full shrink-0" />
-      </div>
-    </div>
-  );
-
-  if (isCheckingHistory || isHistoryLoading) {
+  if (isHistoryLoading) {
     return (
         <div className="flex h-screen w-full flex-col items-center justify-center bg-background">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -223,7 +177,7 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
                       Welcome, {studentName}!
                     </h2>
                     <p className="text-sm md:text-base text-muted-foreground">
-                      You can start a conversation by typing your doubt below.
+                      {showArchived ? "You are viewing archived messages." : "You can start a conversation by typing your doubt below."}
                     </p>
                   </div>
                 </div>
@@ -263,6 +217,7 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
             handleClearChat={handleClearChat}
             isLoading={isLoading || isHistoryLoading}
             inputRef={inputRef}
+            disabled={showArchived}
         />
       </div>
     </TooltipProvider>

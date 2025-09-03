@@ -25,6 +25,7 @@ interface ChatFooterProps {
   handleClearChat: () => void;
   isLoading: boolean;
   inputRef: React.RefObject<HTMLTextAreaElement>;
+  disabled?: boolean;
 }
 
 export function ChatFooter({
@@ -34,6 +35,7 @@ export function ChatFooter({
   handleClearChat,
   isLoading,
   inputRef,
+  disabled = false,
 }: ChatFooterProps) {
   return (
     <footer className="p-2 md:p-4 bg-white/30 dark:bg-[#18192b]/30 backdrop-blur-md border-t border-gray-200 dark:border-gray-800/50">
@@ -51,7 +53,7 @@ export function ChatFooter({
                     variant="ghost"
                     size="icon"
                     className="h-10 w-10 shrink-0 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                    disabled={isLoading}
+                    disabled={isLoading || disabled}
                   >
                     <Trash2 className="h-5 w-5" />
                     <span className="sr-only">Clear chat history</span>
@@ -82,7 +84,7 @@ export function ChatFooter({
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your doubt here..."
+              placeholder={disabled ? "You cannot send messages in an archived chat." : "Type your doubt here..."}
               className="w-full pl-3 pr-16 py-5 md:pl-4 md:pr-20 md:py-5 text-sm md:text-base bg-gray-100 dark:bg-gray-800 border-2 border-transparent focus:border-primary rounded-xl md:rounded-2xl resize-none transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-background dark:text-gray-100 max-h-48 custom-scrollbar"
               rows={1}
               onKeyDown={(e) => {
@@ -91,12 +93,12 @@ export function ChatFooter({
                   handleSubmit(e as any);
                 }
               }}
-              disabled={isLoading}
+              disabled={isLoading || disabled}
             />
             <Button
               type="submit"
               size="icon"
-              disabled={isLoading || !input.trim()}
+              disabled={isLoading || !input.trim() || disabled}
               className="absolute right-2 bottom-[7px] md:right-3 md:bottom-3 w-9 h-9 md:w-10 md:h-10 rounded-full bg-primary hover:bg-primary/90 transition-all duration-300 transform hover:scale-110 active:scale-100 flex items-center justify-center"
             >
               <Send className="h-4 w-4 md:h-5 md:w-5" />

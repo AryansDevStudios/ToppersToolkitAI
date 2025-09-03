@@ -11,6 +11,8 @@ import {
   getDocs,
   limit,
   Timestamp,
+  writeBatch,
+  where,
 } from 'firebase/firestore';
 
 export interface Message {
@@ -18,6 +20,7 @@ export interface Message {
   role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: string;
+  render?: boolean;
 }
 
 function formatHistory(messages: Message[]): string {
@@ -42,6 +45,7 @@ export async function getAiResponse(
       role: lastUserMessage.role,
       content: lastUserMessage.content,
       timestamp: serverTimestamp(),
+      render: true,
     };
     await addDoc(collection(db, 'chats', studentName, 'messages'), userMessageForDb);
 
@@ -66,7 +70,8 @@ export async function getAiResponse(
     const aiMessageForDb = {
         role: aiMessage.role,
         content: aiMessage.content,
-        timestamp: serverTimestamp()
+        timestamp: serverTimestamp(),
+        render: true,
     };
     await addDoc(collection(db, 'chats', studentName, 'messages'), aiMessageForDb);
 
@@ -78,6 +83,7 @@ export async function getAiResponse(
       role: 'assistant',
       content: errorMessage,
       timestamp: serverTimestamp(),
+      render: true,
     };
     await addDoc(collection(db, 'chats', studentName, 'messages'), aiMessageForDb);
     return errorMessage;
@@ -85,11 +91,23 @@ export async function getAiResponse(
 }
 
 export async function getChatHistory(
-  studentName: string
+  studentName: string,
+  showArchived: boolean = false
 ): Promise<Message[]> {
   try {
     const messagesCol = collection(db, 'chats', studentName, 'messages');
-    const q = query(messagesCol, orderBy('timestamp', 'asc'), limit(50));
+    
+    let q;
+    if (showArchived) {
+      q = query(messagesCol, orderBy('timestamp', 'asc'));
+    } else {
+      q = query(
+        messagesCol,
+        where('render', 'in', [true, null]),
+        orderBy('timestamp', 'asc')
+      );
+    }
+    
     const querySnapshot = await getDocs(q);
     const messages = querySnapshot.docs.map((doc) => {
       const data = doc.data();
@@ -99,23 +117,81 @@ export async function getChatHistory(
         role: data.role,
         content: data.content,
         timestamp: timestamp ? timestamp.toDate().toISOString() : new Date().toISOString(),
+        render: data.render,
       };
     }) as Message[];
     return messages;
   } catch (error) {
     console.error("Error fetching chat history:", error);
-    return [];
+    // When a composite index is missing, Firestore throws an error.
+    // We can try a simpler query that fetches messages without the 'render' field for backward compatibility.
+    try {
+      const messagesCol = collection(db, 'chats', studentName, 'messages');
+      const q = query(messagesCol, orderBy('timestamp', 'asc'));
+      const querySnapshot = await getDocs(q);
+      const messages = querySnapshot.docs
+        .map((doc) => {
+          const data = doc.data();
+          // Manually filter for 'render' being true or null/undefined
+          if (showArchived || data.render === true || data.render === undefined || data.render === null) {
+            const timestamp = data.timestamp as Timestamp;
+            return {
+              id: doc.id,
+              role: data.role,
+              content: data.content,
+              timestamp: timestamp ? timestamp.toDate().toISOString() : new Date().toISOString(),
+              render: data.render,
+            } as Message;
+          }
+          return null;
+        })
+        .filter(Boolean) as Message[];
+      return messages;
+    } catch (fallbackError) {
+      console.error("Fallback error fetching chat history:", fallbackError);
+      return [];
+    }
   }
 }
 
 export async function hasChatHistory(studentName: string): Promise<boolean> {
     try {
       const messagesCol = collection(db, 'chats', studentName, 'messages');
-      const q = query(messagesCol, limit(1));
+      const q = query(messagesCol, where('render', 'in', [true, null]), limit(1));
       const querySnapshot = await getDocs(q);
       return !querySnapshot.empty;
     } catch (error) {
-      console.error("Error checking for chat history:", error);
-      return false; // Assume no history on error
+      // Fallback for when the composite index doesn't exist yet
+      console.warn("hasChatHistory query failed, falling back to fetching all messages and checking locally.");
+      try {
+        const allMessages = await getChatHistory(studentName, false);
+        return allMessages.length > 0;
+      } catch (fallbackError) {
+        console.error("Error checking for chat history with fallback:", fallbackError);
+        return false;
+      }
     }
   }
+
+export async function clearUserChatSession(studentName: string): Promise<{success: boolean, error?: string}> {
+    try {
+        const messagesCol = collection(db, 'chats', studentName, 'messages');
+        const q = query(messagesCol, where('render', '!=', false));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            return { success: true };
+        }
+
+        const batch = writeBatch(db);
+        querySnapshot.forEach(doc => {
+            batch.update(doc.ref, { render: false });
+        });
+
+        await batch.commit();
+        return { success: true };
+    } catch (error) {
+        console.error("Error clearing user chat session:", error);
+        return { success: false, error: (error as Error).message };
+    }
+}
