@@ -1,4 +1,4 @@
-{// @ts-nocheck
+// @ts-nocheck
 'use client';
 
 import React, { useState, useEffect, useRef, FormEvent } from 'react';
@@ -29,17 +29,42 @@ const getInitials = (name: string) => {
   ).toUpperCase();
 };
 
-// helper to extract raw text from mdast node recursively
 const extractRawText = (node: any): string => {
-  if (!node) return '';
-  if (node.type === 'text' && typeof node.value === 'string') {
-    return node.value;
-  }
-  if (Array.isArray(node.children)) {
-    return node.children.map((child) => extractRawText(child)).join('');
-  }
-  return '';
+    if (!node) return '';
+    if (node.type === 'text') {
+      return node.value || '';
+    }
+    if (Array.isArray(node.children)) {
+      return node.children.map(child => extractRawText(child)).join('');
+    }
+    return '';
 };
+
+// Recursive renderer for nested math
+function renderNodeWithMath(node: any): React.ReactNode {
+  if (!node) return null;
+
+  if (node.type === 'text') {
+    const parts = node.value.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+\$)/g).filter(Boolean);
+    return parts.map((part: string, i: number) => {
+      if (part.startsWith('$$') && part.endsWith('$$')) {
+        return <BlockMath key={i} math={part.slice(2, -2).trim()} />;
+      }
+      if (part.startsWith('$') && part.endsWith('$')) {
+        return <InlineMath key={i} math={part.slice(1, -1).trim()} />;
+      }
+      return <span key={i}>{part}</span>;
+    });
+  }
+
+  if (node.children && node.children.length > 0) {
+    return node.children.map((child: any, i: number) => (
+      <React.Fragment key={i}>{renderNodeWithMath(child)}</React.Fragment>
+    ));
+  }
+
+  return null;
+}
 
 export function Chat({ studentName, studentClass, gender }: { studentName: string, studentClass: string, gender?: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -272,38 +297,34 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
                                 : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-bl-lg border border-gray-200 dark:border-gray-700'
                             )}
                           >
-                            <ReactMarkdown
+                             <ReactMarkdown
                               remarkPlugins={[remarkGfm]}
                               components={{
-                                // Override paragraph rendering to handle inline and block math
-                                p: ({ node, children }) => {
-                                  const raw = extractRawText(node);
-                                  // If the entire paragraph is a block math: $$ ... $$
-                                  const blockMath = raw.match(/^\s*\$\$([\s\S]*?)\$\$\s*$/);
-                                  if (blockMath) {
-                                    return (
-                                      <div className="my-2">
-                                        <BlockMath math={blockMath[1].trim()} />
-                                      </div>
-                                    );
-                                  }
-
-                                  // Otherwise split by inline math occurrences $...$
-                                  // Keep plain text pieces as spans
-                                  const parts = raw.split(/(\$[^$\n]+\$)/g).filter(Boolean);
-                                  return (
-                                    <p>
-                                      {parts.map((part: string, i: number) => {
-                                        if (part.startsWith('$') && part.endsWith('$')) {
-                                          const content = part.slice(1, -1);
-                                          return <InlineMath key={i} math={content} />;
-                                        }
-                                        return <span key={i}>{part}</span>;
-                                      })}
-                                    </p>
-                                  );
-                                },
+                                p: ({ node }) => <p>{renderNodeWithMath(node)}</p>,
+                                li: ({ node }) => <li>{renderNodeWithMath(node)}</li>,
                                 // Keep other default renderers intact
+                                a: ({node, ...props}) => <a {...props} />,
+                                h1: ({node, ...props}) => <h1 {...props} />,
+                                h2: ({node, ...props}) => <h2 {...props} />,
+                                h3: ({node, ...props}) => <h3 {...props} />,
+                                h4: ({node, ...props}) => <h4 {...props} />,
+                                h5: ({node, ...props}) => <h5 {...props} />,
+                                h6: ({node, ...props}) => <h6 {...props} />,
+                                blockquote: ({node, ...props}) => <blockquote {...props} />,
+                                ul: ({node, ...props}) => <ul {...props} />,
+                                ol: ({node, ...props}) => <ol {...props} />,
+                                strong: ({node, ...props}) => <strong {...props} />,
+                                em: ({node, ...props}) => <em {...props} />,
+                                code: ({node, inline, className, children, ...props}) => {
+                                  const match = /language-(\w+)/.exec(className || '')
+                                  return !inline && match ? (
+                                    <div {...props}>{String(children)}</div>
+                                  ) : (
+                                    <code className={className} {...props}>
+                                      {children}
+                                    </code>
+                                  )
+                                }
                               }}
                             >
                               {message.content}
