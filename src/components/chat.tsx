@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useRef, FormEvent } from 'react';
-import { Bot, Send, User, BrainCircuit, Paintbrush, Copy, Check, Loader2 } from 'lucide-react';
+import { Bot, Send, User, BrainCircuit, Copy, Check } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -12,6 +12,7 @@ import { Skeleton } from './ui/skeleton';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useKatexRender } from '@/hooks/useKatexRender';
 
 const getInitials = (name: string) => {
     if (!name) return '';
@@ -34,6 +35,9 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  // Custom hook to render LaTeX
+  useKatexRender(messages);
 
   useEffect(() => {
     async function loadHistory() {
@@ -68,44 +72,6 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
       }
     };
   }, []);
-
-  const renderMath = () => {
-    try {
-      if (window.renderMathInElement) {
-        window.renderMathInElement(document.body, {
-          delimiters: [
-            {left: '$$', right: '$$', display: true},
-            {left: '$', right: '$', display: false},
-            {left: '\\(', right: '\\)', display: false},
-            {left: '\\[', right: '\\]', display: true}
-          ]
-        });
-      }
-    } catch (error) {
-      console.error("Error rendering KaTeX:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (messages.length === 0) return;
-
-    let attempts = 0;
-    const intervalId = setInterval(() => {
-      if (window.renderMathInElement) {
-        clearInterval(intervalId);
-        renderMath();
-      } else {
-        attempts++;
-        if (attempts > 10) { // Stop trying after 1 second
-          clearInterval(intervalId);
-          console.error("KaTeX failed to load.");
-        }
-      }
-    }, 100);
-
-    return () => clearInterval(intervalId);
-  }, [messages]);
-
 
   useEffect(() => {
     if (scrollAreaRef.current) {
