@@ -10,6 +10,7 @@ function ChatPage() {
   const studentName = searchParams.get('name');
   const studentClass = searchParams.get('class');
   const gender = searchParams.get('gender');
+  const archive = searchParams.get('archive') === 'true';
 
   const isTeacher = studentClass?.toLowerCase() === 'teacher';
   const isInfoMissing = !studentName || !studentClass || (isTeacher && !gender);
@@ -36,7 +37,7 @@ function ChatPage() {
 
   return (
     <main className="h-screen bg-background">
-      <Chat studentName={studentName} studentClass={studentClass} gender={gender || undefined} />
+      <Chat studentName={studentName} studentClass={studentClass} gender={gender || undefined} showArchived={archive} />
     </main>
   );
 }

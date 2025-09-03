@@ -11,9 +11,6 @@ import {
   getDocs,
   limit,
   Timestamp,
-  doc,
-  deleteDoc,
-  writeBatch,
 } from 'firebase/firestore';
 
 export interface Message {
@@ -108,27 +105,5 @@ export async function getChatHistory(
   } catch (error) {
     console.error("Error fetching chat history:", error);
     return [];
-  }
-}
-
-export async function clearChatHistory(studentName: string): Promise<{ success: boolean }> {
-  try {
-    const messagesColRef = collection(db, 'chats', studentName, 'messages');
-    const querySnapshot = await getDocs(messagesColRef);
-    
-    if (querySnapshot.empty) {
-        return { success: true };
-    }
-
-    const batch = writeBatch(db);
-    querySnapshot.forEach((doc) => {
-      batch.delete(doc.ref);
-    });
-    
-    await batch.commit();
-    return { success: true };
-  } catch (error) {
-    console.error("Error clearing chat history: ", error);
-    return { success: false };
   }
 }

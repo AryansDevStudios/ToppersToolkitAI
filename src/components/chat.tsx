@@ -6,7 +6,7 @@ import { Bot, Send, User, BrainCircuit, Copy, Check, Trash2 } from 'lucide-react
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { getAiResponse, getChatHistory, clearChatHistory, type Message } from '@/app/actions';
+import { getAiResponse, getChatHistory, type Message } from '@/app/actions';
 import { cn } from '@/lib/utils';
 import { Skeleton } from './ui/skeleton';
 import ReactMarkdown from 'react-markdown';
@@ -132,7 +132,7 @@ const renderers = {
 };
 
 
-export function Chat({ studentName, studentClass, gender }: { studentName: string, studentClass: string, gender?: string }) {
+export function Chat({ studentName, studentClass, gender, showArchived }: { studentName: string, studentClass: string, gender?: string, showArchived: boolean }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -143,13 +143,18 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
 
   useEffect(() => {
     async function loadHistory() {
-      setIsHistoryLoading(true);
-      const history = await getChatHistory(studentName);
-      setMessages(history);
-      setIsHistoryLoading(false);
+      if (showArchived) {
+        setIsHistoryLoading(true);
+        const history = await getChatHistory(studentName);
+        setMessages(history);
+        setIsHistoryLoading(false);
+      } else {
+        setIsHistoryLoading(false);
+        setMessages([]);
+      }
     }
     loadHistory();
-  }, [studentName]);
+  }, [studentName, showArchived]);
 
   useEffect(() => {
     const chatInput = inputRef.current;
@@ -222,22 +227,9 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
   };
 
   const handleClearChat = async () => {
-    setIsLoading(true);
-    const result = await clearChatHistory(studentName);
-    if (result.success) {
-      setMessages([{
-        role: 'system',
-        content: 'Your chat history has been cleared.',
-        timestamp: new Date().toISOString(),
-      }]);
-    } else {
-      setMessages(prev => [...prev, {
-        role: 'system',
-        content: 'Sorry, there was an error clearing your history.',
-        timestamp: new Date().toISOString(),
-      }]);
-    }
-    setIsLoading(false);
+    const url = new URL(window.location.href);
+    url.searchParams.delete('archive');
+    window.location.href = url.toString();
   };
 
 
@@ -448,7 +440,7 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
                         variant="ghost"
                         size="icon"
                         className="h-10 w-10 shrink-0 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                        disabled={isLoading || isHistoryLoading || messages.length === 0}
+                        disabled={isLoading || isHistoryLoading}
                       >
                         <Trash2 className="h-5 w-5" />
                         <span className="sr-only">Clear chat history</span>
@@ -461,15 +453,15 @@ export function Chat({ studentName, studentClass, gender }: { studentName: strin
                 </Tooltip>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogTitle>Are you sure you want to clear the chat?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This will permanently delete your current chat history. This action cannot be undone.
+                      This will start a new chat session. Your previous messages will be archived and can be viewed by adding '?archive=true' to the URL.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction onClick={handleClearChat} className={cn(buttonVariants({variant: 'destructive'}))}>
-                      Delete
+                      Clear Chat
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
