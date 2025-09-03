@@ -2,11 +2,11 @@
 'use client';
 
 import React, { useState, useEffect, useRef, FormEvent } from 'react';
-import { Bot, Send, User, BrainCircuit, Copy, Check, Trash2 } from 'lucide-react';
+import { Bot, Send, User, BrainCircuit, Copy, Check, Trash2, Loader2 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { getAiResponse, getChatHistory, type Message } from '@/app/actions';
+import { getAiResponse, getChatHistory, hasChatHistory, type Message } from '@/app/actions';
 import { cn } from '@/lib/utils';
 import { Skeleton } from './ui/skeleton';
 import ReactMarkdown from 'react-markdown';
@@ -27,6 +27,7 @@ import {
 // KaTeX imports
 import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
+import { useSearchParams } from 'next/navigation';
 
 const getInitials = (name: string) => {
   if (!name) return '';
@@ -138,23 +139,44 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
   const [isLoading, setIsLoading] = useState(false);
   const [isHistoryLoading, setIsHistoryLoading] = useState(true);
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+  const [isCheckingHistory, setIsCheckingHistory] = useState(true);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    async function loadHistory() {
-      if (showArchived) {
-        setIsHistoryLoading(true);
-        const history = await getChatHistory(studentName);
-        setMessages(history);
-        setIsHistoryLoading(false);
+    async function checkAndLoadHistory() {
+      // If the URL already tells us whether to show archived content, respect it.
+      if (searchParams.has('archive')) {
+        if (showArchived) {
+          setIsHistoryLoading(true);
+          const history = await getChatHistory(studentName);
+          setMessages(history);
+          setIsHistoryLoading(false);
+        } else {
+          setMessages([]);
+          setIsHistoryLoading(false);
+        }
+        setIsCheckingHistory(false);
+        return;
+      }
+  
+      // If no 'archive' param, check if history exists for the user.
+      const historyExists = await hasChatHistory(studentName);
+      if (historyExists) {
+        // If history exists, redirect to the archived view to load it.
+        const url = new URL(window.location.href);
+        url.searchParams.set('archive', 'true');
+        window.location.href = url.toString();
       } else {
+        // No history, so just start a fresh chat.
+        setIsCheckingHistory(false);
         setIsHistoryLoading(false);
         setMessages([]);
       }
     }
-    loadHistory();
-  }, [studentName, showArchived]);
+    checkAndLoadHistory();
+  }, [studentName, showArchived, searchParams]);
 
   useEffect(() => {
     const chatInput = inputRef.current;
@@ -312,6 +334,15 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
       </div>
     </div>
   );
+
+  if (isCheckingHistory) {
+    return (
+        <div className="flex h-screen w-full flex-col items-center justify-center bg-background">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="mt-4 text-muted-foreground">Checking for previous conversations...</p>
+        </div>
+    );
+  }
 
   return (
     <TooltipProvider>

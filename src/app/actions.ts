@@ -107,3 +107,15 @@ export async function getChatHistory(
     return [];
   }
 }
+
+export async function hasChatHistory(studentName: string): Promise<boolean> {
+    try {
+      const messagesCol = collection(db, 'chats', studentName, 'messages');
+      const q = query(messagesCol, limit(1));
+      const querySnapshot = await getDocs(q);
+      return !querySnapshot.empty;
+    } catch (error) {
+      console.error("Error checking for chat history:", error);
+      return false; // Assume no history on error
+    }
+  }
