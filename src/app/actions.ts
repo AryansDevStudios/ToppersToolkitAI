@@ -1,3 +1,4 @@
+
 'use server';
 
 import { db } from '@/lib/firebase';
@@ -111,8 +112,13 @@ export async function getChatHistory(
     
     const querySnapshot = await getDocs(q);
     const messages = querySnapshot.docs.map((doc) => {
-      const data = doc.data();
-      const timestamp = data.timestamp as Timestamp;
+      const data = doc.data() as {
+        role: 'user' | 'assistant' | 'system';
+        content: string;
+        timestamp?: Timestamp;
+        render?: boolean;
+      };
+      const timestamp = data.timestamp;
       return {
         id: doc.id,
         role: data.role,
@@ -132,10 +138,15 @@ export async function getChatHistory(
       const querySnapshot = await getDocs(q);
       const messages = querySnapshot.docs
         .map((doc) => {
-          const data = doc.data();
+          const data = doc.data() as {
+            role: 'user' | 'assistant' | 'system';
+            content: string;
+            timestamp?: Timestamp;
+            render?: boolean;
+          };
           // Manually filter for 'render' being true or null/undefined
           if (showArchived || data.render === true || data.render === undefined || data.render === null) {
-            const timestamp = data.timestamp as Timestamp;
+            const timestamp = data.timestamp;
             return {
               id: doc.id,
               role: data.role,
