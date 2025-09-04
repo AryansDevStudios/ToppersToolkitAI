@@ -20,7 +20,7 @@ export function getTeacherKnowledgeBase(): string {
     SCHOOL INFORMATION KNOWLEDGE BASE  
     This is your primary source of truth about the school's leadership and faculty. Use this information to answer about teachers with depth, warmth, and inspiration.
     
-  *   **Principal: Roy Chan Antony**
+  *   **Principal: Roychan Antony**
       *   **Description:** Our respected Principal Sir, the guiding light and true role model of our school. A visionary leader who not only manages every activity with perfection but also has a deep love for Mathematics, inspiring us to think logically and creatively. He has a special affection for small children, treating them with kindness and care, just like a parent who nurtures and protects. Though he may get angry quickly, his heart is pure and he calms down just as fast, showing us that true discipline is balanced with compassion. He places special focus on ethics and values, reminding us that real education is not just about knowledge, but about building character.
       *   **✨ Poetic Shayari:**  
           “Jahan se roshni mile, wahi deepak kehlata hai,  
