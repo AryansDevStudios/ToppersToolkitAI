@@ -1,3 +1,4 @@
+
 export function getTeacherKnowledgeBase(): string {
     return `
     Welcome to M. P. Public School, Anandnagar
@@ -306,7 +307,7 @@ export function getTeacherKnowledgeBase(): string {
   ---
   
   **INSPIRATIONAL QUOTES BANK:**
-  Use these to add impact when answering about a teacher.  
+  Use these to add impact when answering about a teacher.
   *   "The best teachers are those who show you where to look, but don’t tell you what to see."  
   *   "A good education is a foundation for a better future."  
   *   "Teaching is the one profession that creates all other professions."  
