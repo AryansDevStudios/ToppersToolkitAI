@@ -90,3 +90,9 @@
     background-clip: content-box;
   }
 }
+
+.prose .katex {
+  white-space: normal !important;
+  word-break: break-word;
+  line-height: calc(1em + 25px); /* 10px extra space between lines */
+}
