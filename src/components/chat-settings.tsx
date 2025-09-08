@@ -34,6 +34,7 @@ export function ChatSettings({ learningMode, setLearningMode }: ChatSettingsProp
 
   const grammarActive = learningMode.grammar;
   const ethicActive = learningMode.ethic;
+  const anyActive = grammarActive || ethicActive;
 
   return (
     <Popover>
@@ -42,13 +43,15 @@ export function ChatSettings({ learningMode, setLearningMode }: ChatSettingsProp
                 variant="ghost"
                 size="sm"
                 className={cn(
-                    "rounded-full h-9 px-4 backdrop-blur-sm transition-all duration-300",
-                    (grammarActive || ethicActive)
-                        ? "bg-primary/10 text-primary-foreground hover:bg-primary/20"
-                        : "bg-background/50 text-muted-foreground hover:bg-background/80"
+                    "rounded-full h-9 px-4 backdrop-blur-sm transition-all duration-300 text-white font-semibold",
+                    !anyActive && "bg-gradient-to-br from-blue-500 to-primary",
+                    grammarActive && !ethicActive && "bg-gradient-to-br from-yellow-400 to-amber-500",
+                    !grammarActive && ethicActive && "bg-gradient-to-br from-green-400 to-emerald-500",
+                    grammarActive && ethicActive && "bg-gradient-to-br from-green-400 to-yellow-500",
+                    anyActive ? "text-primary-foreground" : "bg-background/50 text-muted-foreground hover:bg-background/80"
                 )}
             >
-                <Sparkles className={cn("h-4 w-4 mr-2 transition-transform", (grammarActive || ethicActive) && "rotate-12 scale-110")} />
+                <Sparkles className={cn("h-4 w-4 mr-2 transition-transform", anyActive && "rotate-12 scale-110")} />
                 <span className="text-sm font-medium">Learning Mode</span>
             </Button>
         </PopoverTrigger>
