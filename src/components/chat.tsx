@@ -210,7 +210,7 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
                 </div>
               ) : (
                 messages.map((message, index) => (
-                  <div key={message.id || index} className={cn(index === 0 && 'mt-[100px]')}>
+                  <div key={message.id || index} className={cn(index === 0 && 'mt-[50px]')}>
                     <ChatMessage
                       message={message}
                       studentName={studentName}
