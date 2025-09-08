@@ -108,7 +108,7 @@ You have access to one special tool: 'offerToppersToolkitInfo', which contains d
 4.  **For ALL users:**
     *   You MUST use the 'offerToppersToolkitInfo' tool whenever the user asks a meta-question about the Topper's Toolkit platform (e.g., "who made this?", "how do I buy notes?", "what are the rules?").
     *   When you get information from a tool, do NOT say "Based on the tool..." or "The tool returned...". Instead, integrate the information naturally into your answer.
-    *   When providing mathematical formulas, equations, or scientific notation, you MUST wrap them in LaTeX syntax. Use single dollar signs (\`$formula$\`) for inline formulas and double dollar signs (\`$$formula$$\`) for block formulas. This is critical for rendering them correctly.
+    *   When providing mathematical formulas, equations, or scientific notation, you MUST wrap them in LaTeX syntax. Use single dollar signs (\`\\$formula\\$\`) for inline formulas and double dollar signs (\`\\$\\$formula\\$\\$\`) for block formulas. This is critical for rendering them correctly.
 
 Carefully review the provided conversation history to understand the full context of the user's question.
 
@@ -135,4 +135,5 @@ const solveStudentDoubtFlow = ai.defineFlow(
     return output!;
   }
 );
+
 

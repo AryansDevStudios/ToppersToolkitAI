@@ -1,20 +1,21 @@
 'use client';
 
 import React from 'react';
-import { Settings, Check } from 'lucide-react';
+import { Sparkles, BookCheck, UserCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { cn } from '@/lib/utils';
 
-export type LearningMode = 'student' | 'grammar-learner' | 'ethic-learner' | 'both';
+export type LearningMode = {
+  grammar: boolean;
+  ethic: boolean;
+};
 
 interface ChatSettingsProps {
   learningMode: LearningMode;
@@ -22,55 +23,61 @@ interface ChatSettingsProps {
 }
 
 export function ChatSettings({ learningMode, setLearningMode }: ChatSettingsProps) {
+
+  const handleGrammarChange = (checked: boolean) => {
+    setLearningMode({ ...learningMode, grammar: checked });
+  };
+
+  const handleEthicChange = (checked: boolean) => {
+    setLearningMode({ ...learningMode, ethic: checked });
+  };
+
+  const grammarActive = learningMode.grammar;
+  const ethicActive = learningMode.ethic;
+
   return (
-    <DropdownMenu>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <DropdownMenuTrigger asChild>
+    <Popover>
+        <PopoverTrigger asChild>
             <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-10 w-10 shrink-0 rounded-full text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                variant="ghost"
+                size="sm"
+                className={cn(
+                    "rounded-full h-9 px-4 backdrop-blur-sm transition-all duration-300",
+                    (grammarActive || ethicActive)
+                        ? "bg-primary/10 text-primary-foreground hover:bg-primary/20"
+                        : "bg-background/50 text-muted-foreground hover:bg-background/80"
+                )}
             >
-              <Settings className="h-5 w-5" />
-              <span className="sr-only">Open settings</span>
+                <Sparkles className={cn("h-4 w-4 mr-2 transition-transform", (grammarActive || ethicActive) && "rotate-12 scale-110")} />
+                <span className="text-sm font-medium">Learning Mode</span>
             </Button>
-          </DropdownMenuTrigger>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>Learning Mode</p>
-        </TooltipContent>
-      </Tooltip>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">Learning Mode</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              Customize the AI's feedback style.
+        </PopoverTrigger>
+      <PopoverContent className="w-64" align="center" side="top">
+        <div className="grid gap-4">
+          <div className="space-y-2">
+            <h4 className="font-medium leading-none">Customize Feedback</h4>
+            <p className="text-sm text-muted-foreground">
+              Select modes to get instant feedback on your writing.
             </p>
           </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup value={learningMode} onValueChange={(value) => setLearningMode(value as LearningMode)}>
-          <DropdownMenuRadioItem value="student">
-            <Check className="mr-2 h-4 w-4" />
-            Standard
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="grammar-learner">
-            <Check className="mr-2 h-4 w-4" />
-            Grammar Learner
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="ethic-learner">
-            <Check className="mr-2 h-4 w-4" />
-            Ethic Learner
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="both">
-            <Check className="mr-2 h-4 w-4" />
-            Both
-          </DropdownMenuRadioItem>
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <div className="grid gap-3">
+            <div className="flex items-center space-x-3">
+              <Checkbox id="grammar" checked={grammarActive} onCheckedChange={handleGrammarChange} />
+              <Label htmlFor="grammar" className="flex items-center gap-2 font-normal text-sm cursor-pointer">
+                <BookCheck className="h-4 w-4 text-muted-foreground"/>
+                Grammar Learner
+              </Label>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Checkbox id="ethic" checked={ethicActive} onCheckedChange={handleEthicChange} />
+              <Label htmlFor="ethic" className="flex items-center gap-2 font-normal text-sm cursor-pointer">
+                <UserCheck className="h-4 w-4 text-muted-foreground" />
+                Ethic Learner
+              </Label>
+            </div>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

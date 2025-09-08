@@ -31,7 +31,7 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isHistoryLoading, setIsHistoryLoading] = useState(true);
-  const [learningMode, setLearningMode] = useLocalStorage<LearningMode>('learningMode', 'student');
+  const [learningMode, setLearningMode] = useLocalStorage<LearningMode>('learningMode', { grammar: false, ethic: false });
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -114,6 +114,14 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
     setIsLoading(false);
   }
 
+  const getLearningModeForApi = (): string => {
+      const { grammar, ethic } = learningMode;
+      if (grammar && ethic) return 'both';
+      if (grammar) return 'grammar-learner';
+      if (ethic) return 'ethic-learner';
+      return 'student';
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
@@ -135,7 +143,7 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
     setIsLoading(true);
 
     try {
-      const currentStudentClass = studentClass.toLowerCase() === 'teacher' ? 'Teacher' : learningMode;
+      const currentStudentClass = studentClass.toLowerCase() === 'teacher' ? 'Teacher' : getLearningModeForApi();
       const aiResponseContent = await getAiResponse(
         studentName,
         currentStudentClass,
