@@ -8,14 +8,15 @@ import { Suspense } from 'react';
 function ChatPage() {
   const searchParams = useSearchParams();
   const studentName = searchParams.get('name');
-  const studentClass = searchParams.get('class'); // Keep for teacher role
+  const studentClassParam = searchParams.get('class');
   const gender = searchParams.get('gender');
   const archive = searchParams.get('archive') === 'true';
 
-  const isTeacher = studentClass?.toLowerCase() === 'teacher';
-  // Simplified check: only name is strictly required from URL now for students.
-  // Teachers still need name, class, and gender.
-  const isInfoMissing = !studentName || (isTeacher && (!studentClass || !gender));
+  const isTeacher = studentClassParam?.toLowerCase() === 'teacher';
+  const studentClass = isTeacher ? 'teacher' : 'student';
+
+  // For teachers, name, class, and gender are required. For students, only name is.
+  const isInfoMissing = !studentName || (isTeacher && !gender);
 
 
   if (isInfoMissing) {
@@ -40,7 +41,7 @@ function ChatPage() {
 
   return (
     <main className="h-screen bg-background">
-      <Chat studentName={studentName} studentClass={studentClass || 'student'} gender={gender || undefined} showArchived={archive} />
+      <Chat studentName={studentName} studentClass={studentClass} gender={gender || undefined} showArchived={archive} />
     </main>
   );
 }
