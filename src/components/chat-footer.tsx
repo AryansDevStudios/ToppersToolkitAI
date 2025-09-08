@@ -40,7 +40,7 @@ export function ChatFooter({
 
   return (
     <footer className="p-2 md:p-4 bg-white/30 dark:bg-[#18192b]/30 backdrop-blur-md border-t border-gray-200 dark:border-gray-800/50">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl mx-auto text-center">
         <form
           onSubmit={handleSubmit}
           className="flex items-end gap-2 md:gap-3"
