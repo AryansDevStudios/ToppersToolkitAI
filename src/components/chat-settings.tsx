@@ -45,7 +45,7 @@ export function ChatSettings({ learningMode, setLearningMode }: ChatSettingsProp
                 className={cn(
                     "rounded-full h-9 px-4 backdrop-blur-sm transition-all duration-300 text-white font-semibold",
                     !anyActive && "bg-gradient-to-br from-blue-500 to-primary",
-                    grammarActive && !ethicActive && "bg-gradient-to-br from-yellow-400 to-amber-500",
+                    grammarActive && !ethicActive && "bg-gradient-to-r from-yellow-300 to-orange-500",
                     !grammarActive && ethicActive && "bg-gradient-to-br from-green-400 to-emerald-500",
                     grammarActive && ethicActive && "bg-gradient-to-br from-green-400 to-yellow-500",
                     anyActive ? "text-primary-foreground" : "bg-background/50 text-muted-foreground hover:bg-background/80"
