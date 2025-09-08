@@ -108,7 +108,7 @@ export function ChatFooter({
           </div>
 
         </form>
-        <p className="text-xs text-center mt-2 bg-gradient-to-r from-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+        <p className="text-xs text-center mt-2 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent inline-block font-semibold">
           A product of Topper's Toolkit by AryansDevStudios
         </p>
       </div>
