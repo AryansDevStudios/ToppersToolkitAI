@@ -11,7 +11,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import 'katex/dist/katex.min.css';
 import { ChatFooter } from './chat-footer';
 import { ChatMessage } from './chat-message';
-import { type LearningMode } from './chat-settings';
+import { ChatSettings, type LearningMode } from './chat-settings';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 
 const getInitials = (name: string) => {
@@ -35,6 +35,8 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const isTeacher = studentClass.toLowerCase() === 'teacher';
 
   useEffect(() => {
     async function loadHistory() {
@@ -182,7 +184,12 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
 
   return (
     <TooltipProvider>
-      <div className="flex h-screen w-full flex-col bg-gradient-to-br from-indigo-50 via-white to-violet-50 dark:from-gray-900 dark:via-gray-900/95 dark:to-violet-900/20">
+      <div className="relative flex h-screen w-full flex-col bg-gradient-to-br from-indigo-50 via-white to-violet-50 dark:from-gray-900 dark:via-gray-900/95 dark:to-violet-900/20">
+        {!isTeacher && (
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
+            <ChatSettings learningMode={learningMode} setLearningMode={setLearningMode} />
+          </div>
+        )}
         <main className="flex-1 overflow-hidden">
           <ScrollArea className="h-full custom-scrollbar" ref={scrollAreaRef}>
             <div className="p-4 md:p-6 space-y-6">
@@ -237,9 +244,6 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
             isLoading={isLoading || isHistoryLoading}
             inputRef={inputRef}
             disabled={showArchived}
-            learningMode={learningMode}
-            setLearningMode={setLearningMode}
-            studentClass={studentClass}
         />
       </div>
     </TooltipProvider>
