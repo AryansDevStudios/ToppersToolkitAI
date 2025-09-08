@@ -13,6 +13,7 @@ import { ChatFooter } from './chat-footer';
 import { ChatMessage } from './chat-message';
 import { ChatSettings, type LearningMode } from './chat-settings';
 import { useLocalStorage } from '@/hooks/use-local-storage';
+import { cn } from '@/lib/utils';
 
 const getInitials = (name: string) => {
   if (!name) return '';
@@ -209,12 +210,13 @@ export function Chat({ studentName, studentClass, gender, showArchived }: { stud
                 </div>
               ) : (
                 messages.map((message, index) => (
-                  <ChatMessage
-                    key={message.id || index}
-                    message={message}
-                    studentName={studentName}
-                    getInitials={getInitials}
-                  />
+                  <div key={message.id || index} className={cn(index === 0 && 'mt-[100px]')}>
+                    <ChatMessage
+                      message={message}
+                      studentName={studentName}
+                      getInitials={getInitials}
+                    />
+                  </div>
                 ))
               )}
               {isLoading && (
